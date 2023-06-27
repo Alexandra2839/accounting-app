@@ -8,6 +8,7 @@ import com.cydeo.service.CompanyService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -31,7 +32,8 @@ public class CompanyServiceImpl implements CompanyService {
         if(company.isPresent()){
             return mapperUtil.convert(company.get(), new CompanyDto());
         }
-        return null;
+
+        else throw new NoSuchElementException("Company with id " + id + " does not exist in the system");
 
     }
 }
