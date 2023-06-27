@@ -2,7 +2,7 @@ package com.cydeo.service.impl;
 
 import com.cydeo.dto.UserDto;
 import com.cydeo.mapper.MapperUtil;
-import com.cydeo.respository.UserRepository;
+import com.cydeo.repository.UserRepository;
 import com.cydeo.service.UserService;
 import org.springframework.stereotype.Service;
 
