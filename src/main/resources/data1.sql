@@ -18,20 +18,20 @@
 --         'OwerWest Street', 'Android Square', 'Phoneix', 'Arizona', 'United States', '85034-8989');
 --
 --
-insert into companies(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
-                      title, phone, website, address_id, company_status)
-values ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'CYDEO', '+1 (652) 852-8888', 'https://www.cydeo.com', 1, 'ACTIVE'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'Green Tech', '+1 (652) 852-3246', 'https://www.greentech.com', 2, 'ACTIVE'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'Blue Tech', '+1 (215) 654-5268', 'https://www.bluetech.com', 3, 'ACTIVE'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'Red Tech', '+1 (215) 846-2642', 'https://www.redtech.com', 4, 'PASSIVE'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'Orange Tech', '+1 (215) 846-4568', 'https://www.orangetech.com', 5, 'PASSIVE'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'Active Tech', '+1 (215) 245-3687', 'https://www.activetech.com', 6, 'PASSIVE');
+-- insert into companies(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
+--                       title, phone, website, address_id, company_status)
+-- values ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'CYDEO', '+1 (652) 852-8888', 'https://www.cydeo.com', 1, 'ACTIVE'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'Green Tech', '+1 (652) 852-3246', 'https://www.greentech.com', 2, 'ACTIVE'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'Blue Tech', '+1 (215) 654-5268', 'https://www.bluetech.com', 3, 'ACTIVE'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'Red Tech', '+1 (215) 846-2642', 'https://www.redtech.com', 4, 'PASSIVE'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'Orange Tech', '+1 (215) 846-4568', 'https://www.orangetech.com', 5, 'PASSIVE'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'Active Tech', '+1 (215) 245-3687', 'https://www.activetech.com', 6, 'PASSIVE');
 
 -- insert into roles(insert_date_time, insert_user_id, is_deleted, last_update_date_time,
 --                   last_update_user_id, description)
@@ -80,27 +80,27 @@ values ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
 --  'admin@redtech.com', '$2a$10$nAB5j9G1c3JHgg7qzhiIXO7cqqr5oJ3LXRNQJKssDUwHXzDGUztNK',
 --  'John', 'Doe', '+1 (659) 756-1265', 2, 4, true);
 --
-insert into clients_vendors(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
-                            client_vendor_type, client_vendor_name, phone, website, address_id, company_id)
-values
--- COMPANY-2 / Green Tech
-('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'CLIENT', 'Orange Tech', '+1 (251) 321-4155',
- 'https://www.orange.com', 5, 2),
-('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'CLIENT', 'Ower Tech', '+1 (251) 321-4141',
- 'https://www.ower.com', 8, 2),
-('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'VENDOR', 'Photobug Tech', '+1 (652) 852-3246',
- 'https://www.photobug.com', 6, 2),
-('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'VENDOR', 'Wordtune Tech', '+1 (652) 852-3246',
- 'https://www.wordtune.com', 7, 2),
--- COMPANY-3 / Blue Tech
-('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'CLIENT', 'Reallinks Tech', '+1 (652) 852-9544',
- 'https://www.reallinks.com', 3, 3),
-('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'VENDOR', 'Livetube Tech', '+1 (652) 852-2055',
- 'https://www.livetube.com', 4, 3),
-('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'CLIENT', 'Key Tech', '+1 (652) 852-7896',
- 'https://www.keytech.com', 1, 3),
-('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'VENDOR', 'Mod Tech', '+1 (652) 852-3648',
- 'https://www.modtech.com', 2, 3);
+-- insert into clients_vendors(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
+--                             client_vendor_type, client_vendor_name, phone, website, address_id, company_id)
+-- values
+-- -- COMPANY-2 / Green Tech
+-- ('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'CLIENT', 'Orange Tech', '+1 (251) 321-4155',
+--  'https://www.orange.com', 5, 2),
+-- ('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'CLIENT', 'Ower Tech', '+1 (251) 321-4141',
+--  'https://www.ower.com', 8, 2),
+-- ('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'VENDOR', 'Photobug Tech', '+1 (652) 852-3246',
+--  'https://www.photobug.com', 6, 2),
+-- ('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'VENDOR', 'Wordtune Tech', '+1 (652) 852-3246',
+--  'https://www.wordtune.com', 7, 2),
+-- -- COMPANY-3 / Blue Tech
+-- ('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'CLIENT', 'Reallinks Tech', '+1 (652) 852-9544',
+--  'https://www.reallinks.com', 3, 3),
+-- ('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'VENDOR', 'Livetube Tech', '+1 (652) 852-2055',
+--  'https://www.livetube.com', 4, 3),
+-- ('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'CLIENT', 'Key Tech', '+1 (652) 852-7896',
+--  'https://www.keytech.com', 1, 3),
+-- ('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'VENDOR', 'Mod Tech', '+1 (652) 852-3648',
+--  'https://www.modtech.com', 2, 3);
 --
 --
 -- insert into categories(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
@@ -128,25 +128,25 @@ values
 -- ('2023-04-15 00:00', 3, 'false', '2023-04-15 00:00', 3, 'Moto G Power', 0, 5, 'PCS', 3);
 --
 -- --
-insert into invoices(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
-                     date, invoice_no, invoice_type, invoice_status, client_vendor_id, company_id)
-values
--- COMPANY-2 / Green Tech
-('2023-04-09 00:00', 2, 'false', '2023-04-09 00:00', 2, '2023-04-09', 'P-001', 'PURCHASE', 'APPROVED', 2, 2),
-('2023-04-10 00:00', 2, 'false', '2023-04-10 00:00', 2, '2023-04-10', 'P-002', 'PURCHASE', 'APPROVED', 3, 2),
-('2023-04-17 00:00', 2, 'false', '2023-04-17 00:00', 2, '2023-04-17', 'S-001', 'SALES', 'APPROVED', 1, 2),
-('2023-04-19 00:00', 2, 'false', '2023-04-19 00:00', 2, '2023-04-19', 'S-002', 'SALES', 'AWAITING_APPROVAL', 1, 2),
-('2023-05-20 00:00', 2, 'false', '2023-05-20 00:00', 2, '2023-05-20', 'S-003', 'SALES', 'AWAITING_APPROVAL', 1, 2),
-
--- COMPANY-3 / Blue Tech
-('2023-04-09 00:00', 3, 'false', '2023-04-09 00:00', 3, '2023-04-09', 'P-001', 'PURCHASE', 'APPROVED', 5, 3),
-('2023-04-10 00:00', 3, 'false', '2023-04-10 00:00', 3, '2023-04-10', 'P-002', 'PURCHASE', 'APPROVED', 5, 3),
-('2023-04-13 00:00', 3, 'false', '2023-04-13 00:00', 3, '2023-04-13', 'S-001', 'SALES', 'APPROVED', 4, 3),
-('2023-05-18 00:00', 3, 'false', '2023-05-18 00:00', 3, '2023-05-18', 'S-002', 'SALES', 'AWAITING_APPROVAL', 4, 3),
-('2023-05-19 00:00', 3, 'false', '2023-05-19 00:00', 3, '2023-05-19', 'S-003', 'SALES', 'AWAITING_APPROVAL', 4, 3),
-('2023-05-20 00:00', 3, 'false', '2023-05-20 00:00', 3, '2023-05-20', 'S-004', 'SALES', 'AWAITING_APPROVAL', 6, 3),
-('2023-05-21 00:00', 3, 'false', '2023-05-21 00:00', 3, '2023-05-21', 'S-005', 'SALES', 'AWAITING_APPROVAL', 6, 3),
-('2023-06-15 00:00', 3, 'false', '2023-06-15 00:00', 3, '2023-06-15', 'P-003', 'PURCHASE', 'AWAITING_APPROVAL', 6, 3);
+-- insert into invoices(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
+--                      date, invoice_no, invoice_type, invoice_status, client_vendor_id, company_id)
+-- values
+-- -- COMPANY-2 / Green Tech
+-- ('2023-04-09 00:00', 2, 'false', '2023-04-09 00:00', 2, '2023-04-09', 'P-001', 'PURCHASE', 'APPROVED', 2, 2),
+-- ('2023-04-10 00:00', 2, 'false', '2023-04-10 00:00', 2, '2023-04-10', 'P-002', 'PURCHASE', 'APPROVED', 3, 2),
+-- ('2023-04-17 00:00', 2, 'false', '2023-04-17 00:00', 2, '2023-04-17', 'S-001', 'SALES', 'APPROVED', 1, 2),
+-- ('2023-04-19 00:00', 2, 'false', '2023-04-19 00:00', 2, '2023-04-19', 'S-002', 'SALES', 'AWAITING_APPROVAL', 1, 2),
+-- ('2023-05-20 00:00', 2, 'false', '2023-05-20 00:00', 2, '2023-05-20', 'S-003', 'SALES', 'AWAITING_APPROVAL', 1, 2),
+--
+-- -- COMPANY-3 / Blue Tech
+-- ('2023-04-09 00:00', 3, 'false', '2023-04-09 00:00', 3, '2023-04-09', 'P-001', 'PURCHASE', 'APPROVED', 5, 3),
+-- ('2023-04-10 00:00', 3, 'false', '2023-04-10 00:00', 3, '2023-04-10', 'P-002', 'PURCHASE', 'APPROVED', 5, 3),
+-- ('2023-04-13 00:00', 3, 'false', '2023-04-13 00:00', 3, '2023-04-13', 'S-001', 'SALES', 'APPROVED', 4, 3),
+-- ('2023-05-18 00:00', 3, 'false', '2023-05-18 00:00', 3, '2023-05-18', 'S-002', 'SALES', 'AWAITING_APPROVAL', 4, 3),
+-- ('2023-05-19 00:00', 3, 'false', '2023-05-19 00:00', 3, '2023-05-19', 'S-003', 'SALES', 'AWAITING_APPROVAL', 4, 3),
+-- ('2023-05-20 00:00', 3, 'false', '2023-05-20 00:00', 3, '2023-05-20', 'S-004', 'SALES', 'AWAITING_APPROVAL', 6, 3),
+-- ('2023-05-21 00:00', 3, 'false', '2023-05-21 00:00', 3, '2023-05-21', 'S-005', 'SALES', 'AWAITING_APPROVAL', 6, 3),
+-- ('2023-06-15 00:00', 3, 'false', '2023-06-15 00:00', 3, '2023-06-15', 'P-003', 'PURCHASE', 'AWAITING_APPROVAL', 6, 3);
 
 -- insert into invoice_products(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
 --                              price, quantity, remaining_quantity, tax, profit_loss, invoice_id, product_id)
