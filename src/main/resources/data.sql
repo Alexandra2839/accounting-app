@@ -1,23 +1,23 @@
-insert into addresses(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
-                      address_line1, address_line2, city, state, country, zip_code)
-values ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        '7925 Jones Branch Dr, #3300', 'Tysons', 'Virginia', 'VA', 'United States', '22102-1234'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'Future Street', 'Times Square', 'Atlanta', 'Georgia', 'United States', '30310-4321'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'North Street', 'Circle Square', 'San Francisco', 'California', 'United States', '94117-8546'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'West Street', 'Triangle Square', 'Los Angeles', 'California', 'United States', '90002-5214'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'East Street', 'Cube Square', 'Los Angeles', 'California', 'United States', '90004-8426'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'South Street', 'Times Square', 'Los Angeles', 'California', 'United States', '90004-6985'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'SouthWest Street', 'Puzzle Square', 'Los Angeles', 'California', 'United States', '90002-8989'),
-       ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
-        'OwerWest Street', 'Android Square', 'Phoneix', 'Arizona', 'United States', '85034-8989');
-
-
+-- insert into addresses(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
+--                       address_line1, address_line2, city, state, country, zip_code)
+-- values ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         '7925 Jones Branch Dr, #3300', 'Tysons', 'Virginia', 'VA', 'United States', '22102-1234'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'Future Street', 'Times Square', 'Atlanta', 'Georgia', 'United States', '30310-4321'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'North Street', 'Circle Square', 'San Francisco', 'California', 'United States', '94117-8546'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'West Street', 'Triangle Square', 'Los Angeles', 'California', 'United States', '90002-5214'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'East Street', 'Cube Square', 'Los Angeles', 'California', 'United States', '90004-8426'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'South Street', 'Times Square', 'Los Angeles', 'California', 'United States', '90004-6985'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'SouthWest Street', 'Puzzle Square', 'Los Angeles', 'California', 'United States', '90002-8989'),
+--        ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
+--         'OwerWest Street', 'Android Square', 'Phoneix', 'Arizona', 'United States', '85034-8989');
+--
+--
 insert into companies(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
                       title, phone, website, address_id, company_status)
 values ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
@@ -80,27 +80,27 @@ values ('2023-04-15 00:00:00', 1, false, '2023-04-15 00:00:00', 1,
 --  'admin@redtech.com', '$2a$10$nAB5j9G1c3JHgg7qzhiIXO7cqqr5oJ3LXRNQJKssDUwHXzDGUztNK',
 --  'John', 'Doe', '+1 (659) 756-1265', 2, 4, true);
 --
--- insert into clients_vendors(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
---                             client_vendor_type, client_vendor_name, phone, website, address_id, company_id)
--- values
--- -- COMPANY-2 / Green Tech
--- ('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'CLIENT', 'Orange Tech', '+1 (251) 321-4155',
---  'https://www.orange.com', 5, 2),
--- ('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'CLIENT', 'Ower Tech', '+1 (251) 321-4141',
---  'https://www.ower.com', 8, 2),
--- ('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'VENDOR', 'Photobug Tech', '+1 (652) 852-3246',
---  'https://www.photobug.com', 6, 2),
--- ('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'VENDOR', 'Wordtune Tech', '+1 (652) 852-3246',
---  'https://www.wordtune.com', 7, 2),
--- -- COMPANY-3 / Blue Tech
--- ('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'CLIENT', 'Reallinks Tech', '+1 (652) 852-9544',
---  'https://www.reallinks.com', 3, 3),
--- ('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'VENDOR', 'Livetube Tech', '+1 (652) 852-2055',
---  'https://www.livetube.com', 4, 3),
--- ('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'CLIENT', 'Key Tech', '+1 (652) 852-7896',
---  'https://www.keytech.com', 1, 3),
--- ('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'VENDOR', 'Mod Tech', '+1 (652) 852-3648',
---  'https://www.modtech.com', 2, 3);
+insert into clients_vendors(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
+                            client_vendor_type, client_vendor_name, phone, website, address_id, company_id)
+values
+-- COMPANY-2 / Green Tech
+('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'CLIENT', 'Orange Tech', '+1 (251) 321-4155',
+ 'https://www.orange.com', 5, 2),
+('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'CLIENT', 'Ower Tech', '+1 (251) 321-4141',
+ 'https://www.ower.com', 8, 2),
+('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'VENDOR', 'Photobug Tech', '+1 (652) 852-3246',
+ 'https://www.photobug.com', 6, 2),
+('2023-04-15T00:00', 2, false, '2023-04-15T00:00', 2, 'VENDOR', 'Wordtune Tech', '+1 (652) 852-3246',
+ 'https://www.wordtune.com', 7, 2),
+-- COMPANY-3 / Blue Tech
+('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'CLIENT', 'Reallinks Tech', '+1 (652) 852-9544',
+ 'https://www.reallinks.com', 3, 3),
+('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'VENDOR', 'Livetube Tech', '+1 (652) 852-2055',
+ 'https://www.livetube.com', 4, 3),
+('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'CLIENT', 'Key Tech', '+1 (652) 852-7896',
+ 'https://www.keytech.com', 1, 3),
+('2023-04-15T00:00', 3, false, '2023-04-15T00:00', 3, 'VENDOR', 'Mod Tech', '+1 (652) 852-3648',
+ 'https://www.modtech.com', 2, 3);
 --
 --
 -- insert into categories(insert_date_time, insert_user_id, is_deleted, last_update_date_time, last_update_user_id,
