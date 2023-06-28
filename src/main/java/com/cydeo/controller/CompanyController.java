@@ -4,10 +4,7 @@ import com.cydeo.dto.CompanyDto;
 import com.cydeo.service.CompanyService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/companies")
@@ -19,7 +16,7 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public String listCompanies(Model model){
 
         model.addAttribute("companies", companyService.listAllCompanies());
@@ -40,14 +37,30 @@ public class CompanyController {
     @GetMapping("/create")
     public String createCompany(Model model){
 
-        model.addAttribute("company", new CompanyDto());
+        model.addAttribute("newCompany", new CompanyDto());
         model.addAttribute("companies", companyService.listAllCompanies());
 
         return "/company/company-create";
 
     }
 
-    @PostMapping("/activate/{id}")
+    @PostMapping("/create")
+    public String saveCompany(@ModelAttribute ("newCompany") CompanyDto companyDto, Model model){
+
+        model.addAttribute("companies", companyService.listAllCompanies());
+
+        companyService.save(companyDto);
+
+        return "redirect:/company/company-list";
+
+    }
+
+
+
+
+
+
+    @GetMapping("/activate/{id}")
     public String activateCompany(@PathVariable("id") Long id, Model model){
 
         model.addAttribute("companies", companyService.listAllCompanies());
@@ -59,7 +72,7 @@ public class CompanyController {
 
     }
 
-    @PostMapping("/deactivate/{id}")
+    @GetMapping("/deactivate/{id}")
     public String deactivateCompany(@PathVariable("id") Long id, Model model){
 
         model.addAttribute("companies", companyService.listAllCompanies());
