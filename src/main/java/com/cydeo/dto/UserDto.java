@@ -18,6 +18,7 @@ public class UserDto {
     private String lastname;
     private String phone;
     private RoleDto role;
+    private boolean enabled;
 
     private CompanyDto company;
 

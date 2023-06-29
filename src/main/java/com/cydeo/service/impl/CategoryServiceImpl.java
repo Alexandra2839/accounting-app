@@ -35,12 +35,12 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto save(CategoryDto categoryDto) {
         Category category = mapperUtil.convert(categoryDto, new Category());
         categoryRepository.save(category);
-        return mapperUtil.convert(category,new CategoryDto());
+        return mapperUtil.convert(category, new CategoryDto());
     }
 
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
-        Category categoryInDB = categoryRepository.findByIdAndIsDeleted(categoryDto.getId(),false);
+        Category categoryInDB = categoryRepository.findByIdAndIsDeleted(categoryDto.getId(), false);
         Category convertedCategory = mapperUtil.convert(categoryDto, new Category());
         convertedCategory.setId(categoryInDB.getId());
         categoryRepository.save(convertedCategory);
@@ -49,10 +49,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto delete(CategoryDto categoryDto) {
-        Category category = categoryRepository.findByIdAndIsDeleted(categoryDto.getId(),false);
+        Category category = categoryRepository.findByIdAndIsDeleted(categoryDto.getId(), false);
         category.setIsDeleted(true);
         category.setDescription(categoryDto.getDescription() + " - " + categoryDto.getId());
         categoryRepository.save(category);
-        return mapperUtil.convert(category,new CategoryDto());
+        return mapperUtil.convert(category, new CategoryDto());
     }
 }

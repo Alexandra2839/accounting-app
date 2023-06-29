@@ -36,7 +36,7 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto findById(long id) {
 
         Company company = companyRepository.findById(id)
-                .orElseThrow( () -> new NoSuchElementException("Company with id " + id + " does not exist in the system"));
+                .orElseThrow(() -> new NoSuchElementException("Company with id " + id + " does not exist in the system"));
         return mapperUtil.convert(company, new CompanyDto());
     }
 
@@ -77,7 +77,6 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto save(CompanyDto companyDto) {
 
 
-
         companyDto.setCompanyStatus(CompanyStatus.PASSIVE);
         Company company = mapperUtil.convert(companyDto, new Company());
 
@@ -90,7 +89,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDto updateById(Long id, CompanyDto dto) {
 
-        Company company = companyRepository.findById(id).orElseThrow(()->new RuntimeException("Company cannot be found"));
+        Company company = companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Company cannot be found"));
         Company convertedCompany = mapperUtil.convert(dto, new Company());
         convertedCompany.setId(company.getId());
         convertedCompany.setCompanyStatus(company.getCompanyStatus());
