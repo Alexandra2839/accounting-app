@@ -23,29 +23,29 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto createProduct(ProductDto productDto) {
-        Product product=mapper.convert(productDto,new Product());
+        Product product = mapper.convert(productDto, new Product());
         productRepository.save(product);
-        return mapper.convert(product,new ProductDto());
+        return mapper.convert(product, new ProductDto());
     }
 
     @Override
     public List<ProductDto> listAllProducts() {
-        List<Product> productList=productRepository.findAll();
+        List<Product> productList = productRepository.findAll();
         return productList.stream()
-                .map(p->mapper.convert(p,new ProductDto()))
+                .map(p -> mapper.convert(p, new ProductDto()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public ProductDto findProductById(Long id) {
-        Product product= productRepository.findByIdAndIsDeleted(id,false);
+        Product product = productRepository.findByIdAndIsDeleted(id, false);
 
-        return mapper.convert(product,new ProductDto());
+        return mapper.convert(product, new ProductDto());
     }
 
     @Override
     public ProductDto updateProduct(ProductDto productDto) {
-        Product product=mapper.convert(productDto,new Product());
+        Product product = mapper.convert(productDto, new Product());
         product.setId(productDto.getId());
         productRepository.save(product);
 
@@ -54,12 +54,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto deleteProduct(ProductDto productDto) {
-        Product product=productRepository.findByIdAndIsDeleted(productDto.getId(),false);
+        Product product = productRepository.findByIdAndIsDeleted(productDto.getId(), false);
         product.setIsDeleted(true);
-        product.setName(productDto.getName()+" / "+productDto.getId());
+        product.setName(productDto.getName() + " / " + productDto.getId());
         productRepository.save(product);
 
-        return mapper.convert(product,new ProductDto());
+        return mapper.convert(product, new ProductDto());
     }
 
 

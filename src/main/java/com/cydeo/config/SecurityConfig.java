@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login")
                 .and()
                 .rememberMe()
-                .tokenValiditySeconds(10*86400)
+                .tokenValiditySeconds(10 * 86400)
                 .key("cydeo")
                 .userDetailsService(securityService)
                 .and().build();
