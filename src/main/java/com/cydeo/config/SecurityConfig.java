@@ -8,6 +8,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
+
 public class SecurityConfig {
 
     private final SecurityService securityService;
@@ -39,7 +40,7 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login")
                 .and()
                 .rememberMe()
-                .tokenValiditySeconds(10*86400)
+                .tokenValiditySeconds(10 * 86400)
                 .key("cydeo")
                 .userDetailsService(securityService)
                 .and().build();
