@@ -2,18 +2,14 @@ package com.cydeo.service.impl;
 
 import com.cydeo.dto.CompanyDto;
 import com.cydeo.entity.Company;
-import com.cydeo.entity.User;
-import com.cydeo.entity.common.UserPrincipal;
 import com.cydeo.enums.CompanyStatus;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CompanyRepository;
 import com.cydeo.service.CompanyService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.cydeo.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -25,12 +21,14 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final MapperUtil mapperUtil;
+    private final SecurityService securityService;
 
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil, SecurityService securityService) {
         this.companyRepository = companyRepository;
         this.mapperUtil = mapperUtil;
 
+        this.securityService = securityService;
     }
 
 
@@ -105,12 +103,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public CompanyDto getCompanyDtoByLoggedInUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String loggedInUserUsername = authentication.getName();
+        return securityService.getLoggedInUser().getCompany();
 
-        Company companyByUser = companyRepository.findCompanyByUser(loggedInUserUsername);
 
-        return mapperUtil.convert(companyByUser, new CompanyDto());
     }
 }
