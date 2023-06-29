@@ -17,4 +17,6 @@ public interface CompanyService {
     CompanyDto save(CompanyDto companyDto);
 
     CompanyDto updateById(Long id, CompanyDto companyDto);
+
+    CompanyDto getCompanyDtoByLoggedInUser();
 }

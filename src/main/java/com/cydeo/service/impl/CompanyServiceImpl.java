@@ -102,4 +102,15 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     }
+
+    @Override
+    public CompanyDto getCompanyDtoByLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String loggedInUserUsername = authentication.getName();
+
+        Company companyByUser = companyRepository.findCompanyByUser(loggedInUserUsername);
+
+        return mapperUtil.convert(companyByUser, new CompanyDto());
+    }
 }
