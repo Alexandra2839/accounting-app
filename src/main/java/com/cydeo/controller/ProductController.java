@@ -17,12 +17,12 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-//    private final CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    public ProductController(ProductService productService/*,CategoryService categoryService*/) {
+    public ProductController(ProductService productService,CategoryService categoryService) {
 
         this.productService = productService;
-       // this.categoryService=categoryService;
+        this.categoryService=categoryService;
     }
 
     @GetMapping("/list")
@@ -39,7 +39,7 @@ public class ProductController {
 
         model.addAttribute("newProduct",new ProductDto());
         model.addAttribute("productUnits", list);
-        //model.addAttribute("categories",categoryService.listOfCategories());
+        model.addAttribute("categories",categoryService.listOfCategories());
         return "product/product-create";
     }
 
