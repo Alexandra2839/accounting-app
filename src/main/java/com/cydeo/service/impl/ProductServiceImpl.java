@@ -49,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto updateProduct(ProductDto productDto) {
         Product product = mapper.convert(productDto, new Product());
         product.setId(productDto.getId());
+        product.setQuantityInStock(findProductById(productDto.getId()).getQuantityInStock());
         productRepository.save(product);
 
         return findProductById(productDto.getId());
