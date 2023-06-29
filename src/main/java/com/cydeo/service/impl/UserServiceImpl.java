@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> listAllUsers() {
-        return userRepository.findAll().stream()
+        return userRepository.findAllByOrderByCompanyTitleAscRoleDescriptionAsc().stream()
                 .map(user -> mapperUtil.convert(user, new UserDto()))
                 .collect(Collectors.toList());
     }
