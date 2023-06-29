@@ -72,4 +72,16 @@ public class UserServiceImpl implements UserService {
         userRepository.save(obj);
         return mapperUtil.convert(obj, new UserDto());
     }
+
+    @Override
+    public void delete(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("User with id " + id + " could not be found"));
+
+        user.setIsDeleted(true);
+        user.setUsername(user.getUsername() + "-" + user.getId());
+        userRepository.save(user);
+
+    }
 }
