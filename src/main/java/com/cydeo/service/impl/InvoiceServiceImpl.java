@@ -38,4 +38,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<Invoice> allPurchased = invoiceRepository.findAllByInvoiceNoStartingWith(s);
         return allPurchased.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto())).collect(Collectors.toList());
     }
+
+    @Override
+    public InvoiceDto update(InvoiceDto invoiceDto) {
+        Invoice invoiceInDb = invoiceRepository.findById(invoiceDto.getId()).orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
+        Invoice convertedInvoice = mapperUtil.convert(invoiceDto, new Invoice());
+
+        convertedInvoice.setId(invoiceInDb.getId());
+
+        invoiceRepository.save(convertedInvoice);
+
+        return mapperUtil.convert(convertedInvoice, new InvoiceDto());
+    }
 }
