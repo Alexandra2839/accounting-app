@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
-        Category categoryInDB = categoryRepository.findById(categoryDto.getId()).orElseThrow();
+        Category categoryInDB = categoryRepository.findByIdAndIsDeleted(categoryDto.getId(),false);
         Category convertedCategory = mapperUtil.convert(categoryDto, new Category());
         convertedCategory.setId(categoryInDB.getId());
         categoryRepository.save(convertedCategory);
