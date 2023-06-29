@@ -23,7 +23,7 @@ public class ClientVendorImpl implements ClientVendorService {
 
     @Override
     public ClientVendorDto findById(Long id) {
-        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
+        ClientVendor clientVendor = clientVendorRepository.findByIdAndIsDeleted(id,false);
         return mapperUtil.convert(clientVendor, new ClientVendorDto());
     }
 
