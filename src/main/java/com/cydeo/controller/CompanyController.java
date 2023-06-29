@@ -28,7 +28,6 @@ public class CompanyController {
     @GetMapping("/update/{id}")
     public String editCompany(@PathVariable("id") Long id, Model model){
 
-        model.addAttribute("companies", companyService.listAllCompanies());
         model.addAttribute("company", companyService.findById(id));
 
         return "/company/company-update";
@@ -37,9 +36,7 @@ public class CompanyController {
 
     @PostMapping("/update/{id}")
     public String saveUpdatedCompany(@ModelAttribute ("company") CompanyDto companyDto,
-                                     @PathVariable("id") Long id, Model model){
-
-        model.addAttribute("companies", companyService.listAllCompanies());
+                                     @PathVariable("id") Long id){
 
         companyService.updateById(id, companyDto);
 
@@ -52,16 +49,14 @@ public class CompanyController {
     public String createCompany(Model model){
 
         model.addAttribute("newCompany", new CompanyDto());
-        model.addAttribute("companies", companyService.listAllCompanies());
 
         return "/company/company-create";
 
     }
 
     @PostMapping("/create")
-    public String saveCompany(@ModelAttribute ("newCompany") CompanyDto companyDto, Model model){
+    public String saveCompany(@ModelAttribute ("newCompany") CompanyDto companyDto){
 
-        model.addAttribute("companies", companyService.listAllCompanies());
 
         companyService.save(companyDto);
 
@@ -74,9 +69,6 @@ public class CompanyController {
     @GetMapping("/activate/{id}")
     public String activateCompany(@PathVariable("id") Long id, Model model){
 
-        model.addAttribute("companies", companyService.listAllCompanies());
-        model.addAttribute("company", companyService.findById(id));
-
         companyService.activateCompanyById(id);
 
         return "redirect:/companies/list";
@@ -86,8 +78,6 @@ public class CompanyController {
     @GetMapping("/deactivate/{id}")
     public String deactivateCompany(@PathVariable("id") Long id, Model model){
 
-        model.addAttribute("companies", companyService.listAllCompanies());
-        model.addAttribute("company", companyService.findById(id));
 
         companyService.deactivateCompanyById(id);
 
