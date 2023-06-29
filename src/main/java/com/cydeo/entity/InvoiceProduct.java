@@ -19,13 +19,11 @@ public class InvoiceProduct extends BaseEntity {
     private BigDecimal price;
     private int tax;
     private BigDecimal profitLoss;
-    private int remainingQty;
+    private int remainingQuantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "invoice_id")
     private Invoice invoice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "product_id")
     private Product product;
 }
