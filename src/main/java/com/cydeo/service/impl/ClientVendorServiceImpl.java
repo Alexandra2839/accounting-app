@@ -12,18 +12,18 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-public class ClientVendorImpl implements ClientVendorService {
+public class ClientVendorServiceImpl implements ClientVendorService {
     private final ClientVendorRepository clientVendorRepository;
     private final MapperUtil mapperUtil;
 
-    public ClientVendorImpl(ClientVendorRepository clientVendorRepository, MapperUtil mapperUtil) {
+    public ClientVendorServiceImpl(ClientVendorRepository clientVendorRepository, MapperUtil mapperUtil) {
         this.clientVendorRepository = clientVendorRepository;
         this.mapperUtil = mapperUtil;
     }
 
     @Override
     public ClientVendorDto findById(Long id) {
-        ClientVendor clientVendor = clientVendorRepository.findByIdAndIsDeleted(id,false);
+        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded"));
         return mapperUtil.convert(clientVendor, new ClientVendorDto());
     }
 
@@ -42,7 +42,7 @@ public class ClientVendorImpl implements ClientVendorService {
 
     @Override
     public ClientVendorDto update(ClientVendorDto clientVendorDto) {
-        ClientVendor clientVendorInDB = clientVendorRepository.findById(clientVendorDto.getId()).orElseThrow();
+        ClientVendor clientVendorInDB = clientVendorRepository.findById(clientVendorDto.getId()).orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded"));
         ClientVendor convertedCV = mapperUtil.convert(clientVendorDto, new ClientVendor());
 
         convertedCV.setId(clientVendorInDB.getId());
@@ -53,7 +53,7 @@ public class ClientVendorImpl implements ClientVendorService {
 
     @Override
     public ClientVendorDto delete(ClientVendorDto clientVendorDto) {
-        ClientVendor clientVendor = clientVendorRepository.findByIdAndIsDeleted(clientVendorDto.getId(), false);
+        ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId()).orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded"));
         clientVendor.setIsDeleted(true);
         clientVendor.setClientVendorName(clientVendorDto.getClientVendorName() + " - " + clientVendorDto.getId());
         clientVendorRepository.save(clientVendor);

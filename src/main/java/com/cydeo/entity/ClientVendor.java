@@ -26,7 +26,7 @@ public class ClientVendor extends BaseEntity {
 
     private String website;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.LAZY)
     private Address address;
 
     @ManyToOne
