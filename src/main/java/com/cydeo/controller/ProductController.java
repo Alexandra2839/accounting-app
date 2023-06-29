@@ -54,7 +54,7 @@ public class ProductController {
     public String editProduct(@PathVariable("id") Long id, Model model){
         model.addAttribute("product",productService.findProductById(id));
         model.addAttribute("productUnits",ProductUnit.values());
-        //model.addAttribute("categories",categoryService.listOfCategories());
+        model.addAttribute("categories",categoryService.listOfCategories());
         return "product/product-update";
     }
 
