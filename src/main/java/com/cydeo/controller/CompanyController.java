@@ -17,7 +17,7 @@ public class CompanyController {
     }
 
     @GetMapping("/list")
-    public String listCompanies(Model model){
+    public String listCompanies(Model model) {
 
         model.addAttribute("companies", companyService.listAllCompanies());
 
@@ -26,7 +26,7 @@ public class CompanyController {
     }
 
     @GetMapping("/update/{id}")
-    public String editCompany(@PathVariable("id") Long id, Model model){
+    public String editCompany(@PathVariable("id") Long id, Model model) {
 
         model.addAttribute("company", companyService.findById(id));
 
@@ -35,8 +35,8 @@ public class CompanyController {
     }
 
     @PostMapping("/update/{id}")
-    public String saveUpdatedCompany(@ModelAttribute ("company") CompanyDto companyDto,
-                                     @PathVariable("id") Long id){
+    public String saveUpdatedCompany(@ModelAttribute("company") CompanyDto companyDto,
+                                     @PathVariable("id") Long id) {
 
         companyService.updateById(id, companyDto);
 
@@ -46,7 +46,7 @@ public class CompanyController {
 
 
     @GetMapping("/create")
-    public String createCompany(Model model){
+    public String createCompany(Model model) {
 
         model.addAttribute("newCompany", new CompanyDto());
 
@@ -55,7 +55,7 @@ public class CompanyController {
     }
 
     @PostMapping("/create")
-    public String saveCompany(@ModelAttribute ("newCompany") CompanyDto companyDto){
+    public String saveCompany(@ModelAttribute("newCompany") CompanyDto companyDto) {
 
 
         companyService.save(companyDto);
@@ -65,9 +65,8 @@ public class CompanyController {
     }
 
 
-
     @GetMapping("/activate/{id}")
-    public String activateCompany(@PathVariable("id") Long id, Model model){
+    public String activateCompany(@PathVariable("id") Long id, Model model) {
 
         companyService.activateCompanyById(id);
 
@@ -76,7 +75,7 @@ public class CompanyController {
     }
 
     @GetMapping("/deactivate/{id}")
-    public String deactivateCompany(@PathVariable("id") Long id, Model model){
+    public String deactivateCompany(@PathVariable("id") Long id, Model model) {
 
 
         companyService.deactivateCompanyById(id);
@@ -84,7 +83,6 @@ public class CompanyController {
         return "redirect:/companies/list";
 
     }
-
 
 
 }
