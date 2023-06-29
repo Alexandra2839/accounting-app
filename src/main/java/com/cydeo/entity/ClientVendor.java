@@ -4,6 +4,7 @@ import com.cydeo.entity.common.BaseEntity;
 import com.cydeo.enums.ClientVendorType;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @Table(name = "clients_vendors")
 @Entity
+@Where(clause = "is_deleted=false")
 public class ClientVendor extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
@@ -24,7 +26,7 @@ public class ClientVendor extends BaseEntity {
 
     private String website;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Address address;
 
     @ManyToOne
