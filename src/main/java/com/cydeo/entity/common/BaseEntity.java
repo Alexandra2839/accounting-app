@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,21 +17,16 @@ import java.time.LocalDateTime;
 @EntityListeners(BaseEntityListener.class)
 public class BaseEntity implements Serializable {
 
+    @Column(nullable = false, updatable = false)
+    public LocalDateTime insertDateTime;
+    @Column(nullable = false, updatable = false)
+    public Long insertUserId;
+    @Column(nullable = false)
+    public LocalDateTime lastUpdateDateTime;
+    @Column(nullable = false)
+    public Long lastUpdateUserId;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, updatable = false)
-    public LocalDateTime insertDateTime;
-
-    @Column(nullable = false, updatable = false)
-    public Long insertUserId;
-
-    @Column(nullable = false)
-    public LocalDateTime lastUpdateDateTime;
-
-    @Column(nullable = false)
-    public Long lastUpdateUserId;
-
     private Boolean isDeleted = false;
 }

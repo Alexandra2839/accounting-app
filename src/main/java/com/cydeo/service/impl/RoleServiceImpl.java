@@ -26,14 +26,14 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleDto findById(Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException ("Role with id "+ id + " could not be found"));
+                .orElseThrow(() -> new NoSuchElementException("Role with id " + id + " could not be found"));
         return mapperUtil.convert(role, new RoleDto());
     }
 
     @Override
     public List<RoleDto> listAllRoles() {
         return roleRepository.findAll().stream()
-                .map(role -> mapperUtil.convert(role,new RoleDto()))
+                .map(role -> mapperUtil.convert(role, new RoleDto()))
                 .collect(Collectors.toList());
     }
 }
