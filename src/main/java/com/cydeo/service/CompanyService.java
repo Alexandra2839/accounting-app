@@ -19,4 +19,6 @@ public interface CompanyService {
     CompanyDto updateById(Long id, CompanyDto companyDto);
 
     CompanyDto getCompanyDtoByLoggedInUser();
+
+    boolean isTitleExist(CompanyDto companyDto);
 }
