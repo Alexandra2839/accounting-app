@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,5 +30,8 @@ public class ClientVendor extends BaseEntity {
 
     @ManyToOne
     private Company company;
+
+    @OneToMany(mappedBy = "clientVendor")
+    private List<Invoice> invoices;
 
 }
