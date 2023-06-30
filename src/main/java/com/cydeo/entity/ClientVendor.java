@@ -7,8 +7,6 @@ import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter

@@ -5,8 +5,10 @@ import com.cydeo.enums.ClientVendorType;
 import com.cydeo.service.ClientVendorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -39,10 +41,18 @@ public class ClientVendorController {
     }
 
     @PostMapping("/create")
-    public String createClientVendor(@ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto, Model model) {
+    public String createClientVendor(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto,
+                                     BindingResult bindingResult, Model model) {
 
+        boolean isClientVendorNameExist = clientVendorService.isClientVendorExist(clientVendorDto);
+        if (isClientVendorNameExist) {
+            bindingResult.rejectValue("clientVendorName", " ", "This client-vendor already exists.");
+        }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
+            return "clientVendor/clientVendor-create";
+        }
         clientVendorService.save(clientVendorDto);
-
 
         return "redirect:/clientVendors/list";
     }

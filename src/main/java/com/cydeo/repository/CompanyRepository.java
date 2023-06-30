@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface CompanyRepository extends JpaRepository<Company,Long> {
+public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Query(value = "SELECT * FROM companies WHERE id != 1 ORDER BY company_status, title ASC", nativeQuery = true)
     List<Company> findAllBesidesId1OrderedByStatusAndTitle();

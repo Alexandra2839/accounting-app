@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,5 +78,15 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         clientVendor.setIsDeleted(true);
         clientVendor.setClientVendorName(clientVendorDto.getClientVendorName() + " - " + clientVendorDto.getId());
         clientVendorRepository.save(clientVendor);
+    }
+
+    @Override
+    public boolean isClientVendorExist(ClientVendorDto clientVendorDto) {
+        ClientVendor clientVendor = clientVendorRepository.findByClientVendorName_AndCompany_Title(
+                        clientVendorDto.getClientVendorName().trim(), companyService.getCompanyDtoByLoggedInUser().getTitle())
+                .orElse(null);
+        if (clientVendor == null) return false;
+
+        return !Objects.equals(clientVendorDto.getId(), clientVendor.getId());
     }
 }
