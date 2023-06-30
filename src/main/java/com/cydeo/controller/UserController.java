@@ -37,7 +37,7 @@ public class UserController {
 
         model.addAttribute("user", userService.findById(id));
         model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("companies", companyService.listAllCompanies());
+        model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
         return "/user/user-update";
     }
 
@@ -45,14 +45,15 @@ public class UserController {
     public String updateUser(@Valid @ModelAttribute("user") UserDto user,
                              BindingResult bindingResult, @PathVariable("id") Long id, Model model) {
 
+        if (userService.isEmailExist(user)) {
+            bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try different email.");
+        }
+
         if (bindingResult.hasErrors()) {
 
-            model.addAttribute("user", userService.findById(id));
+            //model.addAttribute("user", userService.findById(id));
             model.addAttribute("userRoles", roleService.listAllRoles());
-            model.addAttribute("companies", companyService.listAllCompanies());
-            if (userService.isEmailExist(user)) {
-                bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try different email.");
-            }
+            model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
 
             return "/user/user-update";
         }
@@ -66,7 +67,7 @@ public class UserController {
 
         model.addAttribute("newUser", new UserDto());
         model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("companies", companyService.listAllCompanies());
+        model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
 
         return "user/user-create";
     }
@@ -74,13 +75,13 @@ public class UserController {
     @PostMapping("/create")
     public String saveUser(@Valid @ModelAttribute("newUser") UserDto user, BindingResult bindingResult, Model model) {
 
+        if (userService.isEmailExist(user)) {
+            bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try different email.");
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("userRoles", roleService.listAllRoles());
-            model.addAttribute("companies", companyService.listAllCompanies());
-
-            if (userService.isEmailExist(user)) {
-                bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try different email.");
-            }
+            model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
 
             return "/user/user-create";
         }
