@@ -1,6 +1,7 @@
 package com.cydeo.entity.common;
 
 import com.cydeo.entity.User;
+import com.cydeo.enums.CompanyStatus;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,7 +44,12 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+
+        if (user.getCompany().getCompanyStatus().equals(CompanyStatus.ACTIVE)){
+            return true;
+        }
+        else return false;
+
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +40,11 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         List<ClientVendor> listOfCV = clientVendorRepository
                 .findAllByCompanyTitleAndSort(companyService.getCompanyDtoByLoggedInUser().getTitle());
         return listOfCV.stream()
-                .map(cv -> mapperUtil.convert(cv, new ClientVendorDto()))
+                .map(cv -> {
+                    ClientVendorDto dto = mapperUtil.convert(cv, new ClientVendorDto());
+                    dto.setHasInvoice(!cv.getInvoices().isEmpty());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 

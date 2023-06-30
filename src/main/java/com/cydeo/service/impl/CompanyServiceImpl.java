@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -106,5 +107,15 @@ public class CompanyServiceImpl implements CompanyService {
         return securityService.getLoggedInUser().getCompany();
 
 
+    }
+
+    @Override
+    public boolean isTitleExist(CompanyDto companyDto) {
+
+        Company company = companyRepository.findByTitle(companyDto.getTitle()).orElse(null);
+
+        if (company == null) return false;
+
+        return !Objects.equals(companyDto.getId(), company.getId());
     }
 }

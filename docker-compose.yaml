@@ -4,8 +4,8 @@ services:                             # Which containers I need.
     networks:                         # Which network this container will use.
       - accounting-network
     container_name: accounting
-#    image: "cemils/accounting:latest"       # for windows
-    image: "owermaiden/accounting:latest"  # for mac (with m1 chip)
+#    image: "cemils/accounting:latest"       # for windows and mac without m1 / m2 chip
+    image: "owermaiden/accounting:latest"  # for mac (with m1 / m2 chip)
     build:                            # This container does not have an image yet, create image from below
       context: src/main/java/com/cydeo                      # You can find Dockerfile in the same folder you are in.
       dockerfile: Dockerfile          # Name of the dockerfile.
