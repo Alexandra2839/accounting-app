@@ -4,7 +4,9 @@ import com.cydeo.dto.UserDto;
 import com.cydeo.entity.User;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.UserRepository;
+import com.cydeo.service.SecurityService;
 import com.cydeo.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +22,13 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, PasswordEncoder passwordEncoder) {
+    private final SecurityService securityService;
+
+    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, PasswordEncoder passwordEncoder, @Lazy SecurityService securityService) {
         this.userRepository = userRepository;
         this.mapperUtil = mapperUtil;
         this.passwordEncoder = passwordEncoder;
+        this.securityService = securityService;
     }
 
     @Override
@@ -41,7 +46,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> listAllUsers() {
-        return userRepository.findAll().stream()
+
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")){
+            return userRepository.findAllByRoleDescription("Admin").stream()
+                    .map(user -> mapperUtil.convert(user, new UserDto()))
+                    .collect(Collectors.toList());
+        }
+
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Admin")){
+            return userRepository.findAllByCompanyTitle(securityService.getLoggedInUser().getCompany().getTitle())
+                    .stream()
+                    .map(user -> mapperUtil.convert(user, new UserDto()))
+                    .collect(Collectors.toList());
+        }
+
+        return userRepository.findAllByOrderByCompanyTitleAscRoleDescriptionAsc().stream()
                 .map(user -> mapperUtil.convert(user, new UserDto()))
                 .collect(Collectors.toList());
     }
