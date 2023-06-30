@@ -49,21 +49,23 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
         InvoiceProduct invoiceProduct = mapperUtil.convert(invoiceProductDto, new InvoiceProduct());
 
+
+        // Set the ID of the invoiceProductDto to null or 0 to let the database generate a new ID
+        invoiceProduct.setId(null); // or invoiceProduct.setId(0L);
         invoiceProduct.setInvoice(invoice);
 
-        invoiceProductRepository.save(invoiceProduct);
+        //invoiceProductRepository.save(invoiceProduct);
+        InvoiceProduct savedInvoiceProduct = invoiceProductRepository.save(invoiceProduct);
 
-        InvoiceProductDto savedInvoiceProduct = mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
+        InvoiceProductDto savedInvoiceProductDTO = mapperUtil.convert(savedInvoiceProduct, new InvoiceProductDto());
 
-//        BigDecimal quantity = new BigDecimal(savedInvoiceProduct.getQuantity());
-//        BigDecimal tax = new BigDecimal(savedInvoiceProduct.getTax());
-//
-//
-//        BigDecimal totalAmountWithOutTax = savedInvoiceProduct.getPrice().multiply(quantity) ;
-//
-//        savedInvoiceProduct.setTotal(totalAmountWithOutTax.add ( (totalAmountWithOutTax.multiply(tax)).divide(new BigDecimal(100)) ));
+        BigDecimal quantity = new BigDecimal(savedInvoiceProduct.getQuantity());
+        BigDecimal tax = new BigDecimal(savedInvoiceProduct.getTax());
+        BigDecimal totalAmountWithoutTax = savedInvoiceProduct.getPrice().multiply(quantity);
+        BigDecimal totalAmountWithTax = totalAmountWithoutTax.add(totalAmountWithoutTax.multiply(tax).divide(new BigDecimal(100)));
 
-        return savedInvoiceProduct;
+        savedInvoiceProductDTO.setTotal(totalAmountWithTax);
+        return savedInvoiceProductDTO;
     }
 
     @Override

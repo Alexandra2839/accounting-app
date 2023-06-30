@@ -59,11 +59,10 @@ public class PurchasesInvoiceController {
     }
     @GetMapping("/update/{id}")//update/14
     private String editInvoice(@PathVariable Long id, Model model){
-        InvoiceProductDto invoiceProductDto = new InvoiceProductDto();
 
        model.addAttribute("invoice",invoiceService.findById(id));//invoice 14
 
-        model.addAttribute("newInvoiceProduct", invoiceProductDto);//invoice product taking PathVariable (14)
+        model.addAttribute("newInvoiceProduct", new InvoiceProductDto());//invoice product taking PathVariable (14)
 
         model.addAttribute("vendors", clientVendorService.findAll());
         model.addAttribute("products", productService.listAllProducts());
@@ -75,7 +74,7 @@ public class PurchasesInvoiceController {
 
     @PostMapping("/addInvoiceProduct/{id}")
     public String saveProduct(@ModelAttribute("newInvoiceProduct")InvoiceProductDto invoiceProductDto, @PathVariable Long id,Model model){
-       // invoiceProductDto.setId(20L);//--------------------------------------------------
+
 
 
        invoiceProductService.save(invoiceProductDto,id);
