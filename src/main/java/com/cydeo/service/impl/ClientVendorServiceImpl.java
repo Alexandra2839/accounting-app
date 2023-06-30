@@ -63,6 +63,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     public ClientVendorDto update(ClientVendorDto clientVendorDto) {
         ClientVendor clientVendorInDB = clientVendorRepository.findById(clientVendorDto.getId())
                 .orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded"));
+        clientVendorDto.getAddress().setId(clientVendorInDB.getAddress().getId());     // otherwise it creates new address instead of updating existing one
         ClientVendor convertedCV = mapperUtil.convert(clientVendorDto, new ClientVendor());
 
         convertedCV.setId(clientVendorInDB.getId());
