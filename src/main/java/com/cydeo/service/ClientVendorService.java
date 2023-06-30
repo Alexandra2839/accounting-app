@@ -17,4 +17,6 @@ public interface ClientVendorService {
     ClientVendorDto update(ClientVendorDto clientVendorDto);
 
     void delete(ClientVendorDto clientVendorDto);
+
+    boolean isClientVendorExist(ClientVendorDto dto);
 }

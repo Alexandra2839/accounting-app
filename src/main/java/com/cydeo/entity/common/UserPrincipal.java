@@ -1,7 +1,6 @@
 package com.cydeo.entity.common;
 
 import com.cydeo.entity.User;
-import com.cydeo.enums.CompanyStatus;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
