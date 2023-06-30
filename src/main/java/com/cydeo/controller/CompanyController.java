@@ -4,7 +4,10 @@ import com.cydeo.dto.CompanyDto;
 import com.cydeo.service.CompanyService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/companies")
@@ -35,8 +38,14 @@ public class CompanyController {
     }
 
     @PostMapping("/update/{id}")
-    public String saveUpdatedCompany(@ModelAttribute("company") CompanyDto companyDto,
+    public String saveUpdatedCompany(@ModelAttribute("company") @Valid CompanyDto companyDto, BindingResult bindingResult,
                                      @PathVariable("id") Long id) {
+
+        if(bindingResult.hasErrors()){
+
+            return "/company/company-update";
+
+        }
 
         companyService.updateById(id, companyDto);
 
@@ -55,8 +64,17 @@ public class CompanyController {
     }
 
     @PostMapping("/create")
-    public String saveCompany(@ModelAttribute("newCompany") CompanyDto companyDto) {
+    public String saveCompany(@ModelAttribute("newCompany") @Valid CompanyDto companyDto, BindingResult bindingResult) {
 
+        if(companyService.isTitleExist(companyDto)){
+            bindingResult.rejectValue("title", " ", "This title already exists");
+        }
+
+        if(bindingResult.hasErrors()){
+
+            return "/company/company-create";
+
+        }
 
         companyService.save(companyDto);
 
