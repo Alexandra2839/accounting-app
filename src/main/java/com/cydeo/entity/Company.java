@@ -27,7 +27,7 @@ public class Company extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CompanyStatus companyStatus;
 
-    @OneToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
 }

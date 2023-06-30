@@ -7,8 +7,6 @@ import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter
@@ -26,7 +24,7 @@ public class ClientVendor extends BaseEntity {
 
     private String website;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     private Address address;
 
     @ManyToOne

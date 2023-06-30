@@ -43,7 +43,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public List<CompanyDto> listAllCompanies() {
 
-        List<Company> companyList = companyRepository.findAll();
+        List<Company> companyList = companyRepository.findAllBesidesId1OrderedByStatusAndTitle();
 
         return companyList.stream().map(company -> mapperUtil.convert(company, new CompanyDto()))
                 .collect(Collectors.toList());
