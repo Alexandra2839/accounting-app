@@ -21,4 +21,6 @@ public interface CompanyService {
     CompanyDto getCompanyDtoByLoggedInUser();
 
     boolean isTitleExist(CompanyDto companyDto);
+
+    List<CompanyDto> listAllCompaniesByLoggedInUser();
 }

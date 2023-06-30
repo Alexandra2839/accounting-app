@@ -118,4 +118,17 @@ public class CompanyServiceImpl implements CompanyService {
 
         return !Objects.equals(companyDto.getId(), company.getId());
     }
+
+    @Override
+    public List<CompanyDto> listAllCompaniesByLoggedInUser() {
+
+        if (!securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
+            return companyRepository.findByTitle(securityService.getLoggedInUser().getCompany().getTitle())
+                    .stream()
+                    .map(company -> mapperUtil.convert(company, new CompanyDto()))
+                    .collect(Collectors.toList());
+        }
+
+        return listAllCompanies();
+    }
 }
