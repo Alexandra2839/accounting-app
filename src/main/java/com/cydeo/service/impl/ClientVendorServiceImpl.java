@@ -42,7 +42,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         return listOfCV.stream()
                 .map(cv -> {
                     ClientVendorDto dto = mapperUtil.convert(cv, new ClientVendorDto());
-                    dto.setHasInvoice(cv.getInvoices().isEmpty());
+                    dto.setHasInvoice(!cv.getInvoices().isEmpty());
                     return dto;
                 })
                 .collect(Collectors.toList());
