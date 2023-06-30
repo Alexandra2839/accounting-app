@@ -7,7 +7,7 @@ services:                             # Which containers I need.
 #    image: "cemils/accounting:latest"       # for windows
     image: "owermaiden/accounting:latest"  # for mac (with m1 chip)
     build:                            # This container does not have an image yet, create image from below
-      context: .                      # You can find Dockerfile in the same folder you are in.
+      context: src/main/java/com/cydeo                      # You can find Dockerfile in the same folder you are in.
       dockerfile: Dockerfile          # Name of the dockerfile.
     environment:                      # Attach this environment variables to my container
       SPRING_PROFILES_ACTIVE: default # Which profile you want to use dev / test etc.
