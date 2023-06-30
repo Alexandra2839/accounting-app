@@ -32,13 +32,8 @@ public class SalesInvoiceController {
     @GetMapping("/create")
     public String createSalesInvoice(Model model){
 
-        InvoiceDto newInvoiceDTO = new InvoiceDto();
 
-        newInvoiceDTO.setInvoiceNo(InvoiceServiceImpl.generateInvoiceNo(InvoiceType.SALES, invoiceService.listOfAllInvoices()));
-        newInvoiceDTO.setDate(LocalDate.now());
-
-
-        model.addAttribute("newSalesInvoice",newInvoiceDTO);
+        model.addAttribute("newSalesInvoice",invoiceService.createNewSalesInvoice());
         model.addAttribute("clients", clientVendorService.findAll());
         model.addAttribute("products", productService.listAllProducts());
 

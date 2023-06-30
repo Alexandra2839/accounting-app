@@ -11,4 +11,8 @@ public interface InvoiceService {
     List<InvoiceDto> listOfPurchasedInvoices(String s);
     InvoiceDto update(InvoiceDto invoiceDto);
     InvoiceDto save(InvoiceDto invoiceDto);
+    InvoiceDto delete(Long id);
+    InvoiceDto approve(Long id);
+    InvoiceDto createNewSalesInvoice();
+    InvoiceDto createNewPurchasesInvoice();
 }

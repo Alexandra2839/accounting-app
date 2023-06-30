@@ -37,13 +37,7 @@ public class PurchasesInvoiceController {
     @GetMapping("/create")
     public String createPurchaseInvoice(Model model){
 
-        InvoiceDto newInvoiceDTO = new InvoiceDto();
-
-        newInvoiceDTO.setInvoiceNo(InvoiceServiceImpl.generateInvoiceNo(InvoiceType.PURCHASE, invoiceService.listOfAllInvoices()));
-        newInvoiceDTO.setDate(LocalDate.now());
-
-
-        model.addAttribute("newPurchaseInvoice",newInvoiceDTO);
+        model.addAttribute("newPurchaseInvoice",invoiceService.createNewPurchasesInvoice());
         model.addAttribute("vendors", clientVendorService.findAll());
         model.addAttribute("products", productService.listAllProducts());
 
@@ -57,14 +51,17 @@ public class PurchasesInvoiceController {
 
         return "redirect:/purchaseInvoices/update/"+obj1.getId();
     }
+
+
     @GetMapping("/update/{id}")//update/14
     private String editInvoice(@PathVariable Long id, Model model){
 
        model.addAttribute("invoice",invoiceService.findById(id));//invoice 14
+        model.addAttribute("vendors", clientVendorService.findAll());
 
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());//invoice product taking PathVariable (14)
 
-        model.addAttribute("vendors", clientVendorService.findAll());
+
         model.addAttribute("products", productService.listAllProducts());
 
         model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(id)); //all products from invoice 14
@@ -75,11 +72,15 @@ public class PurchasesInvoiceController {
     @PostMapping("/addInvoiceProduct/{id}")
     public String saveProduct(@ModelAttribute("newInvoiceProduct")InvoiceProductDto invoiceProductDto, @PathVariable Long id,Model model){
 
-
-
        invoiceProductService.save(invoiceProductDto,id);
 
        return "redirect:/purchaseInvoices/update/" + id;
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deletePurchasedInvoice(@PathVariable Long id, Model model){
+        invoiceService.delete(id);
+        return "redirect:/purchaseInvoices/list/";
     }
 
 
@@ -87,6 +88,12 @@ public class PurchasesInvoiceController {
     public String pInvoicesList(Model model){
         model.addAttribute("invoices",invoiceService.listOfPurchasedInvoices("P"));
         return"/invoice/purchase-invoice-list";
+    }
+
+    @GetMapping("print/{id}")
+    public String printPurchasedInvoice(@PathVariable Long id) {
+//        invoiceService.print(id);
+        return "invoice/invoice_print";
     }
 
 
