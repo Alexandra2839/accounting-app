@@ -51,6 +51,10 @@ public class ProductController {
         ProductUnit[] enumValues = ProductUnit.values();
         List<ProductUnit> list = new ArrayList<>(Arrays.asList(enumValues));
 
+        if (productService.isNameExist(dto)) {
+            bindingResult.rejectValue("name", " ", "This name already exists.");
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("productUnits", list);
             model.addAttribute("categories", categoryService.listOfCategories());
@@ -70,7 +74,18 @@ public class ProductController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@ModelAttribute ProductDto dto) {
+    public String updateProduct(@Valid @ModelAttribute("product") ProductDto dto, BindingResult bindingResult, Model model) {
+
+        if (productService.isNameExist(dto)) {
+            bindingResult.rejectValue("name", " ", "This name already exists.");
+
+        }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("productUnits", ProductUnit.values());
+            model.addAttribute("categories", categoryService.listOfCategories());
+            return "product/product-update";
+        }
+
         productService.updateProduct(dto);
         return "redirect:/products/list";
     }
