@@ -15,5 +15,5 @@ public interface CategoryService {
 
     CategoryDto delete(CategoryDto categoryDto);
 
-    List<CategoryDto> getAllCategoriesByCompany();
+
 }
