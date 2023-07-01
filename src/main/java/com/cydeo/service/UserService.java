@@ -18,4 +18,6 @@ public interface UserService {
     UserDto save(UserDto user);
 
     void delete(Long id);
+
+    boolean isEmailExist(UserDto userDto);
 }

@@ -6,7 +6,10 @@ import com.cydeo.service.RoleService;
 import com.cydeo.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
@@ -34,16 +37,26 @@ public class UserController {
 
         model.addAttribute("user", userService.findById(id));
         model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("companies", companyService.listAllCompanies());
+        model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
         return "/user/user-update";
     }
 
     @PostMapping("/update/{id}")
-    public String updateUser(@PathVariable("id") Long id, @ModelAttribute("user") UserDto user, Model model) {
+    public String updateUser(@Valid @ModelAttribute("user") UserDto user,
+                             BindingResult bindingResult, @PathVariable("id") Long id, Model model) {
 
-        model.addAttribute("user", userService.findById(id));
-        model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("companies", companyService.listAllCompanies());
+        if (userService.isEmailExist(user)) {
+            bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try different email.");
+        }
+
+        if (bindingResult.hasErrors()) {
+
+            //model.addAttribute("user", userService.findById(id));
+            model.addAttribute("userRoles", roleService.listAllRoles());
+            model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
+
+            return "/user/user-update";
+        }
 
         userService.update(user);
         return "redirect:/users/list";
@@ -54,16 +67,24 @@ public class UserController {
 
         model.addAttribute("newUser", new UserDto());
         model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("companies", companyService.listAllCompanies());
+        model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
 
         return "user/user-create";
     }
 
     @PostMapping("/create")
-    public String saveUser(@ModelAttribute("newUser") UserDto user, Model model) {
+    public String saveUser(@Valid @ModelAttribute("newUser") UserDto user, BindingResult bindingResult, Model model) {
 
-        model.addAttribute("userRoles", roleService.listAllRoles());
-        model.addAttribute("companies", companyService.listAllCompanies());
+        if (userService.isEmailExist(user)) {
+            bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try different email.");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("userRoles", roleService.listAllRoles());
+            model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
+
+            return "/user/user-create";
+        }
 
         userService.save(user);
 
