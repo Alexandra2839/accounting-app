@@ -13,7 +13,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     List<Company> findAllBesidesId1OrderedByStatusAndTitle();
 
 
-    Optional <Company> findByTitle(String title);
+    Optional<Company> findByTitle(String title);
 
     List<Company> findAllByTitle(String title);
 

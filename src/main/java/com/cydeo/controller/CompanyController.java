@@ -41,7 +41,13 @@ public class CompanyController {
     public String saveUpdatedCompany(@ModelAttribute("company") @Valid CompanyDto companyDto, BindingResult bindingResult,
                                      @PathVariable("id") Long id) {
 
-        if(bindingResult.hasErrors()){
+
+        if (companyService.isTitleExist(companyDto)) {
+            bindingResult.rejectValue("title", " ", "This title already exists");
+        }
+
+
+        if (bindingResult.hasErrors()) {
 
             return "/company/company-update";
 
