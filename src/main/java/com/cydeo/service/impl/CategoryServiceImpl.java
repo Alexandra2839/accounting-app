@@ -5,19 +5,23 @@ import com.cydeo.entity.Category;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CategoryRepository;
 import com.cydeo.service.CategoryService;
+import com.cydeo.service.CompanyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final MapperUtil mapperUtil;
+    private final CompanyService companyService;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, CompanyService companyService) {
         this.categoryRepository = categoryRepository;
         this.mapperUtil = mapperUtil;
+        this.companyService = companyService;
     }
 
     @Override
@@ -28,11 +32,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> listOfCategories() {
-        return categoryRepository.findAll().stream().map(C -> mapperUtil.convert(C, new CategoryDto())).collect(Collectors.toList());
+
+        return categoryRepository.findAll().stream()
+                .map(C -> mapperUtil.convert(C, new CategoryDto()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public CategoryDto save(CategoryDto categoryDto) {
+        categoryDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
+
         Category category = mapperUtil.convert(categoryDto, new Category());
         categoryRepository.save(category);
         return mapperUtil.convert(category, new CategoryDto());
@@ -40,11 +49,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
-        Category categoryInDB = categoryRepository.findByIdAndIsDeleted(categoryDto.getId(), false);
-        Category convertedCategory = mapperUtil.convert(categoryDto, new Category());
-        convertedCategory.setId(categoryInDB.getId());
-        categoryRepository.save(convertedCategory);
-        return mapperUtil.convert(convertedCategory, new CategoryDto());
+        Category categoryInDB = categoryRepository.findById(categoryDto.getId())
+                .orElseThrow(()->new NoSuchElementException("Category has not been found"));
+
+       categoryDto.setId(categoryInDB.getId());
+       categoryDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
+
+       categoryRepository.save(mapperUtil.convert(categoryDto,new Category()));
+
+       return mapperUtil.convert(categoryInDB,new CategoryDto());
     }
 
     @Override
@@ -54,5 +67,13 @@ public class CategoryServiceImpl implements CategoryService {
         category.setDescription(categoryDto.getDescription() + " - " + categoryDto.getId());
         categoryRepository.save(category);
         return mapperUtil.convert(category, new CategoryDto());
+    }
+
+    @Override
+    public List<CategoryDto> listAllCategoriesByCompany() {
+        return categoryRepository.findAll().stream()
+                .map(C -> mapperUtil.convert(C, new CategoryDto()))
+                .filter(C-> C.getCompany().getId()==companyService.getCompanyDtoByLoggedInUser().getId())
+                .collect(Collectors.toList());
     }
 }
