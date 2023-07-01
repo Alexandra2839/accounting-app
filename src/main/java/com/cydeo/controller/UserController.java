@@ -36,7 +36,9 @@ public class UserController {
     public String editUser(@PathVariable("id") Long id, Model model) {
 
         UserDto user = userService.findById(id);
-        userService.setOnlyAdmin(user);
+        if (user.getRole().getDescription().equals("Admin")) {
+            userService.setOnlyAdmin(user);
+        }
 
         model.addAttribute("user", user);
         model.addAttribute("userRoles", roleService.listAllRoles());
