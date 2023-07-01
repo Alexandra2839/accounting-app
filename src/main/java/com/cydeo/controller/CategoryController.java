@@ -17,7 +17,7 @@ public class CategoryController {
 
     @GetMapping("/list")
     public String showCategoryList(Model model) {
-        model.addAttribute("categories", categoryService.listOfCategories());
+        model.addAttribute("categories", categoryService.listAllCategoriesByCompany());
         return "/category/category-list";
     }
 
@@ -40,8 +40,7 @@ public class CategoryController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateCategory(@PathVariable Long id, @ModelAttribute("category") CategoryDto categoryDto, Model model) {
-        model.addAttribute("category", categoryService.findById(id));
+    public String updateCategory(@PathVariable Long id, @ModelAttribute("category") CategoryDto categoryDto) {
 
         categoryService.update(categoryDto);
         return "redirect:/categories/list";

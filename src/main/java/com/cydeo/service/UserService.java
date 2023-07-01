@@ -20,4 +20,6 @@ public interface UserService {
     void delete(Long id);
 
     boolean isEmailExist(UserDto userDto);
+
+    void setOnlyAdmin(UserDto userDto);
 }

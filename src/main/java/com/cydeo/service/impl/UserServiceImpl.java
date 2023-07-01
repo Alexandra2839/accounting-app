@@ -48,13 +48,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> listAllUsers() {
 
-        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")){
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
             return userRepository.findAllByRoleDescription("Admin").stream()
                     .map(user -> mapperUtil.convert(user, new UserDto()))
                     .collect(Collectors.toList());
         }
 
-        if (securityService.getLoggedInUser().getRole().getDescription().equals("Admin")){
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Admin")) {
             return userRepository.findAllByCompanyTitle(securityService.getLoggedInUser().getCompany().getTitle())
                     .stream()
                     .map(user -> mapperUtil.convert(user, new UserDto()))
@@ -113,5 +113,13 @@ public class UserServiceImpl implements UserService {
             return false;
 
         return !Objects.equals(userDto.getId(), user.getId());
+    }
+
+    @Override
+    public void setOnlyAdmin(UserDto userDto) {
+
+        if (userRepository.countByCompanyTitleAndRoleDescription(userDto.getCompany().getTitle(), userDto.getRole().getDescription()) == 1)
+            userDto.setOnlyAdmin(true);
+
     }
 }
