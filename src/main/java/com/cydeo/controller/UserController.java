@@ -35,7 +35,12 @@ public class UserController {
     @GetMapping("/update/{id}")
     public String editUser(@PathVariable("id") Long id, Model model) {
 
-        model.addAttribute("user", userService.findById(id));
+        UserDto user = userService.findById(id);
+        if (user.getRole().getDescription().equals("Admin")) {
+            userService.setOnlyAdmin(user);
+        }
+
+        model.addAttribute("user", user);
         model.addAttribute("userRoles", roleService.listAllRoles());
         model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
         return "/user/user-update";
@@ -51,7 +56,6 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
 
-            //model.addAttribute("user", userService.findById(id));
             model.addAttribute("userRoles", roleService.listAllRoles());
             model.addAttribute("companies", companyService.listAllCompaniesByLoggedInUser());
 
