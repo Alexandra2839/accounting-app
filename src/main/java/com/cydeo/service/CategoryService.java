@@ -14,4 +14,6 @@ public interface CategoryService {
     CategoryDto update(CategoryDto categoryDto);
 
     CategoryDto delete(CategoryDto categoryDto);
+
+    List<CategoryDto> getAllCategoriesByCompany();
 }
