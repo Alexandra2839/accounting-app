@@ -32,7 +32,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> listOfCategories() {
-        return categoryRepository.findAll().stream().map(C -> mapperUtil.convert(C, new CategoryDto())).collect(Collectors.toList());
+        CompanyDto dto = companyService.getCompanyDtoByLoggedInUser();
+        return categoryRepository.findAll().stream()
+                .filter(c -> c.getCompany().getId() == dto.getId())
+                .map(c -> mapperUtil.convert(c, new CategoryDto()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -60,12 +64,5 @@ public class CategoryServiceImpl implements CategoryService {
         return mapperUtil.convert(category, new CategoryDto());
     }
 
-    @Override
-    public List<CategoryDto> getAllCategoriesByCompany(){
-        CompanyDto dto =companyService.getCompanyDtoByLoggedInUser();
-        return categoryRepository.findAll().stream()
-                .filter(c->c.getCompany().getId()== dto.getId())
-                .map(c->mapperUtil.convert(c,new CategoryDto()))
-                .collect(Collectors.toList());
-    }
+
 }
