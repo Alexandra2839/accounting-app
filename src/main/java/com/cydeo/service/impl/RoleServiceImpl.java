@@ -5,6 +5,7 @@ import com.cydeo.entity.Role;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.RoleRepository;
 import com.cydeo.service.RoleService;
+import com.cydeo.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +17,13 @@ public class RoleServiceImpl implements RoleService {
 
     private final MapperUtil mapperUtil;
     private final RoleRepository roleRepository;
+    private final SecurityService securityService;
 
 
-    public RoleServiceImpl(MapperUtil mapperUtil, RoleRepository roleRepository) {
+    public RoleServiceImpl(MapperUtil mapperUtil, RoleRepository roleRepository, SecurityService securityService) {
         this.mapperUtil = mapperUtil;
         this.roleRepository = roleRepository;
+        this.securityService = securityService;
     }
 
     @Override
@@ -32,6 +35,19 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleDto> listAllRoles() {
+
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")){
+            return roleRepository.findAllByDescription("Admin").stream()
+                    .map(role -> mapperUtil.convert(role, new RoleDto()))
+                    .collect(Collectors.toList());
+        }
+        if (!securityService.getLoggedInUser().getRole().getDescription().equals("Root User")){
+            return roleRepository.findAllByDescriptionNot("Root User").stream()
+                    .map(role -> mapperUtil.convert(role, new RoleDto()))
+                    .collect(Collectors.toList());
+        }
+
+
         return roleRepository.findAll().stream()
                 .map(role -> mapperUtil.convert(role, new RoleDto()))
                 .collect(Collectors.toList());

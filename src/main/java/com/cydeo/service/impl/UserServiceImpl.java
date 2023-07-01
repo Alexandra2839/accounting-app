@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,5 +103,15 @@ public class UserServiceImpl implements UserService {
         user.setUsername(user.getUsername() + "-" + user.getId());
         userRepository.save(user);
 
+    }
+
+    @Override
+    public boolean isEmailExist(UserDto userDto) {
+        User user = userRepository.findByUsername(userDto.getUsername());
+
+        if (user == null)
+            return false;
+
+        return !Objects.equals(userDto.getId(), user.getId());
     }
 }
