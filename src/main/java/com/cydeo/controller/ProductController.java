@@ -42,18 +42,18 @@ public class ProductController {
 
         model.addAttribute("newProduct", new ProductDto());
         model.addAttribute("productUnits", list);
-        model.addAttribute("categories", categoryService.getAllCategoriesByCompany());
+        model.addAttribute("categories", categoryService.listOfCategories());
         return "product/product-create";
     }
 
     @PostMapping("/create")
-    public String saveProduct(@Valid @ModelAttribute("newProduct") ProductDto dto,BindingResult bindingResult,Model model) {
+    public String saveProduct(@Valid @ModelAttribute("newProduct") ProductDto dto, BindingResult bindingResult, Model model) {
         ProductUnit[] enumValues = ProductUnit.values();
         List<ProductUnit> list = new ArrayList<>(Arrays.asList(enumValues));
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             model.addAttribute("productUnits", list);
-            model.addAttribute("categories", categoryService.getAllCategoriesByCompany());
+            model.addAttribute("categories", categoryService.listOfCategories());
             return "product/product-create";
         }
 
