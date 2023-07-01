@@ -53,7 +53,7 @@ public class PurchasesInvoiceController {
     }
 
 
-    @GetMapping("/update/{id}")//update/14
+    @GetMapping("/update/{id}")
     private String editInvoice(@PathVariable Long id, Model model){
 
        model.addAttribute("invoice",invoiceService.findById(id));//invoice 14
@@ -69,32 +69,39 @@ public class PurchasesInvoiceController {
         return "/invoice/purchase-invoice-update";
     }
 
-    @PostMapping("/addInvoiceProduct/{id}")
-    public String saveProduct(@ModelAttribute("newInvoiceProduct")InvoiceProductDto invoiceProductDto, @PathVariable Long id,Model model){
+    @PostMapping("/addInvoiceProduct/{invoiceId}")
+    public String saveProduct(@ModelAttribute("newInvoiceProduct")InvoiceProductDto invoiceProductDto, @PathVariable Long invoiceId,Model model){
 
-       invoiceProductService.save(invoiceProductDto,id);
+       invoiceProductService.save(invoiceProductDto,invoiceId);
 
-       return "redirect:/purchaseInvoices/update/" + id;
+       return "redirect:/purchaseInvoices/update/" + invoiceId;
     }
 
     @GetMapping("/delete/{id}")
-    public String deletePurchasedInvoice(@PathVariable Long id, Model model){
+    public String deletePurchasedInvoice(@PathVariable Long id){
         invoiceService.delete(id);
         return "redirect:/purchaseInvoices/list/";
+    }
+
+    @GetMapping("removeInvoiceProduct/{invoiceId}/{productId}")
+    public String deleteInvoiceProduct(@PathVariable Long invoiceId, @PathVariable Long productId){
+        invoiceProductService.deleteInvoiceProduct(invoiceId,productId);
+        return "redirect:/purchaseInvoices/update/" + invoiceId;
     }
 
 
     @GetMapping("/list")
     public String pInvoicesList(Model model){
-        model.addAttribute("invoices",invoiceService.listOfPurchasedInvoices("P"));
+        model.addAttribute("invoices",invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.PURCHASE));
+
         return"/invoice/purchase-invoice-list";
     }
 
-    @GetMapping("print/{id}")
-    public String printPurchasedInvoice(@PathVariable Long id) {
-//        invoiceService.print(id);
-        return "invoice/invoice_print";
-    }
+//    @GetMapping("print/{id}")
+//    public String printPurchasedInvoice(@PathVariable Long id) {
+////        invoiceService.print(id);
+//        return "invoice/invoice_print";
+//    }
 
 
 

@@ -42,35 +42,46 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
 
-
     @Override
-    public InvoiceProductDto save(InvoiceProductDto invoiceProductDto, Long id) {// new Product ,  invoiceDTO 14
+    public InvoiceProductDto save(InvoiceProductDto invoiceProductDto, Long id) {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
 
         InvoiceProduct invoiceProduct = mapperUtil.convert(invoiceProductDto, new InvoiceProduct());
 
-
-        // Set the ID of the invoiceProductDto to null or 0 to let the database generate a new ID
-        invoiceProduct.setId(null); // or invoiceProduct.setId(0L);
         invoiceProduct.setInvoice(invoice);
 
-        //invoiceProductRepository.save(invoiceProduct);
         InvoiceProduct savedInvoiceProduct = invoiceProductRepository.save(invoiceProduct);
 
-        InvoiceProductDto savedInvoiceProductDTO = mapperUtil.convert(savedInvoiceProduct, new InvoiceProductDto());
+        return mapperUtil.convert(savedInvoiceProduct, new InvoiceProductDto());
+    }
 
-        BigDecimal quantity = new BigDecimal(savedInvoiceProduct.getQuantity());
-        BigDecimal tax = new BigDecimal(savedInvoiceProduct.getTax());
-        BigDecimal totalAmountWithoutTax = savedInvoiceProduct.getPrice().multiply(quantity);
-        BigDecimal totalAmountWithTax = totalAmountWithoutTax.add(totalAmountWithoutTax.multiply(tax).divide(new BigDecimal(100)));
-
-        savedInvoiceProductDTO.setTotal(totalAmountWithTax);
-        return savedInvoiceProductDTO;
+    @Override
+    public InvoiceProductDto deleteInvoiceProduct(Long invoiceId, Long productId) {
+        InvoiceProduct invoiceProduct = invoiceProductRepository.findByInvoiceIdAndId(invoiceId,productId);
+        invoiceProduct.setIsDeleted(true);
+        invoiceProductRepository.save(invoiceProduct);
+        return mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
     }
 
     @Override
     public List<InvoiceProductDto> findByInvoiceId(Long id) {
-        return invoiceProductRepository.findByInvoiceId(id).stream().map(p -> mapperUtil.convert(p, new InvoiceProductDto()))
+        return invoiceProductRepository.findByInvoiceId(id)
+                .stream()
+                .map(this::calculateTotalPrice)
                 .collect(Collectors.toList());
+    }
+
+    private InvoiceProductDto calculateTotalPrice(InvoiceProduct invoiceProduct) {
+
+        InvoiceProductDto invoiceProductDTO = mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
+
+        BigDecimal quantity = new BigDecimal(invoiceProductDTO.getQuantity());
+        BigDecimal tax = new BigDecimal(invoiceProductDTO.getTax());
+        BigDecimal totalAmountWithoutTax = invoiceProductDTO.getPrice().multiply(quantity);
+        BigDecimal totalAmountWithTax = totalAmountWithoutTax.add(totalAmountWithoutTax.multiply(tax).divide(new BigDecimal(100)));
+
+        invoiceProductDTO.setTotal(totalAmountWithTax);
+
+        return invoiceProductDTO;
     }
 }

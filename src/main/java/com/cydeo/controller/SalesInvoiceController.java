@@ -42,11 +42,11 @@ public class SalesInvoiceController {
     @PostMapping("/create")
     public String saveSalesInvoice(@ModelAttribute("newSalesInvoice")InvoiceDto invoiceDto, Model model){
         model.addAttribute("clients", clientVendorService.findAll());
-        InvoiceDto obj1 = invoiceService.save(invoiceDto);
+        InvoiceDto obj1 = invoiceService.saveSalesInvoice(invoiceDto);
 
         return "redirect:/salesInvoices/update/"+obj1.getId();
     }
-    @GetMapping("/update/{id}")//update/14
+    @GetMapping("/update/{id}")
     private String editInvoice(@PathVariable Long id, Model model){
 
 
@@ -61,19 +61,28 @@ public class SalesInvoiceController {
 
         return "/invoice/sales-invoice-update";
     }
-    @PostMapping("/addInvoiceProduct/{id}")
-    public String saveProduct(@ModelAttribute("newInvoiceProduct")InvoiceProductDto invoiceProductDto, @PathVariable Long id,Model model){
-        // invoiceProductDto.setId(20L);//--------------------------------------------------
+    @PostMapping("/addInvoiceProduct/{invoiceId}")
+    public String saveProduct(@ModelAttribute("newInvoiceProduct")InvoiceProductDto invoiceProductDto, @PathVariable Long invoiceId,Model model){
 
 
-        invoiceProductService.save(invoiceProductDto,id);
+        invoiceProductService.save(invoiceProductDto,invoiceId);
 
-        return "redirect:/salesInvoices/update/" + id;
+        return "redirect:/salesInvoices/update/" + invoiceId;
+    }
+    @GetMapping("/delete/{id}")
+    public String deleteSalesInvoice(@PathVariable Long id){
+        invoiceService.delete(id);
+        return "redirect:/salesInvoices/list/";
+    }
+    @GetMapping("removeInvoiceProduct/{invoiceId}/{productId}")
+    public String deleteInvoiceProduct(@PathVariable Long invoiceId, @PathVariable Long productId){
+        invoiceProductService.deleteInvoiceProduct(invoiceId,productId);
+        return "redirect:/salesInvoices/update/" + invoiceId;
     }
 
     @GetMapping("/list")
     public String sInvoicesList(Model model){
-        model.addAttribute("invoices",invoiceService.listOfPurchasedInvoices("S"));
+        model.addAttribute("invoices",invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.SALES));
         return"/invoice/sales-invoice-list";
     }
 }
