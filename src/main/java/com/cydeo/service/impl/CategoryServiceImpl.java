@@ -71,9 +71,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> listAllCategoriesByCompany() {
-        return categoryRepository.findAll().stream()
-                .map(C -> mapperUtil.convert(C, new CategoryDto()))
-                .filter(C-> C.getCompany().getId()==companyService.getCompanyDtoByLoggedInUser().getId())
-                .collect(Collectors.toList());
+
+        List<Category> categoryList=  categoryRepository
+                .getAllProductsByCompanySorted(companyService.getCompanyDtoByLoggedInUser().getId());
+
+        return categoryList.stream()
+               .map(c->mapperUtil.convert(c,new CategoryDto()))
+               .collect(Collectors.toList());
     }
 }
