@@ -4,13 +4,13 @@ public enum InvoiceStatus {
 
     AWAITING_APPROVAL("Awaiting Approval"), APPROVED("Approved");
 
-    private final String values;
+    private final String value;
 
-    InvoiceStatus(String values) {
-        this.values = values;
+    InvoiceStatus(String value) {
+        this.value = value;
     }
 
-    public String getValues() {
-        return values;
+    public String getValue() {
+        return value;
     }
 }

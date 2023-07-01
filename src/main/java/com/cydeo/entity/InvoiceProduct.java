@@ -4,11 +4,9 @@ import com.cydeo.entity.common.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -16,6 +14,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @Table(name = "invoice_products")
+@Where(clause = "is_deleted=false")
 public class InvoiceProduct extends BaseEntity {
 
     private int quantity;
@@ -24,7 +23,7 @@ public class InvoiceProduct extends BaseEntity {
     private BigDecimal profitLoss;
     private int remainingQuantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST},fetch = FetchType.LAZY)
     private Invoice invoice;
 
     @ManyToOne(fetch = FetchType.LAZY)
