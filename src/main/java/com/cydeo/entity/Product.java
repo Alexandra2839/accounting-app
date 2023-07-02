@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,7 +27,10 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProductUnit productUnit;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(mappedBy = "product")
+    private List<InvoiceProduct> invoiceProducts;
 }

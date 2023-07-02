@@ -1,6 +1,7 @@
 package com.cydeo.service;
 
 import com.cydeo.dto.CategoryDto;
+import com.cydeo.dto.CompanyDto;
 
 import java.util.List;
 
@@ -15,5 +16,7 @@ public interface CategoryService {
 
     CategoryDto delete(CategoryDto categoryDto);
 
-    List<CategoryDto> listAllCategoriesByCompany();
+    boolean isDescriptionExist(CategoryDto categoryDto);
+
+
 }

@@ -7,8 +7,10 @@ import com.cydeo.service.CategoryService;
 import com.cydeo.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +47,20 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public String saveProduct(@ModelAttribute ProductDto dto) {
+    public String saveProduct(@Valid @ModelAttribute("newProduct") ProductDto dto, BindingResult bindingResult, Model model) {
+        ProductUnit[] enumValues = ProductUnit.values();
+        List<ProductUnit> list = new ArrayList<>(Arrays.asList(enumValues));
+
+        if (productService.isNameExist(dto)) {
+            bindingResult.rejectValue("name", " ", "This name already exists.");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("productUnits", list);
+            model.addAttribute("categories", categoryService.listOfCategories());
+            return "product/product-create";
+        }
+
         productService.createProduct(dto);
         return "redirect:/products/list";
     }
@@ -59,7 +74,18 @@ public class ProductController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@ModelAttribute ProductDto dto) {
+    public String updateProduct(@Valid @ModelAttribute("product") ProductDto dto, BindingResult bindingResult, Model model) {
+
+        if (productService.isNameExist(dto)) {
+            bindingResult.rejectValue("name", " ", "This name already exists.");
+
+        }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("productUnits", ProductUnit.values());
+            model.addAttribute("categories", categoryService.listOfCategories());
+            return "product/product-update";
+        }
+
         productService.updateProduct(dto);
         return "redirect:/products/list";
     }
