@@ -86,5 +86,10 @@ public class SalesInvoiceController {
         model.addAttribute("invoices",invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.SALES));
         return"/invoice/sales-invoice-list";
     }
+    @GetMapping("/approve/{invoiceId}")
+    public String approveSalesInvoice(@PathVariable Long invoiceId, Model model){
+        invoiceService.approve(invoiceId);
+        return "redirect:/salesInvoices/list";
+    }
 }
 
