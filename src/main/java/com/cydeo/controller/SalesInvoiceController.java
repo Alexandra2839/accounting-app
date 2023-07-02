@@ -2,6 +2,7 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.InvoiceDto;
 import com.cydeo.dto.InvoiceProductDto;
+import com.cydeo.enums.ClientVendorType;
 import com.cydeo.enums.InvoiceType;
 import com.cydeo.service.ClientVendorService;
 import com.cydeo.service.InvoiceProductService;
@@ -34,14 +35,14 @@ public class SalesInvoiceController {
 
 
         model.addAttribute("newSalesInvoice",invoiceService.createNewSalesInvoice());
-        model.addAttribute("clients", clientVendorService.findAll());
+        model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
         model.addAttribute("products", productService.listAllProducts());
 
         return "/invoice/sales-invoice-create";
     }
     @PostMapping("/create")
     public String saveSalesInvoice(@ModelAttribute("newSalesInvoice")InvoiceDto invoiceDto, Model model){
-        model.addAttribute("clients", clientVendorService.findAll());
+        model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
         InvoiceDto obj1 = invoiceService.saveSalesInvoice(invoiceDto);
 
         return "redirect:/salesInvoices/update/"+obj1.getId();
@@ -54,7 +55,7 @@ public class SalesInvoiceController {
 
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());//invoice product taking PathVariable (14)
 
-        model.addAttribute("clients", clientVendorService.findAll());
+        model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
         model.addAttribute("products", productService.listAllProducts());
 
         model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(id)); //all products from invoice 14

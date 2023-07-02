@@ -69,6 +69,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
     public InvoiceDto saveSalesInvoice(InvoiceDto invoiceDto) {
 
+        invoiceDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
+
         Invoice invoice1 = mapperUtil.convert(invoiceDto, new Invoice());
         invoice1.setId(invoiceDto.getId());
         invoice1.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
@@ -107,7 +109,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDto createNewSalesInvoice() {
         InvoiceDto invoiceDTO = new InvoiceDto();
-        invoiceDTO.setInvoiceNo("S-00" + (invoiceRepository.findAllByInvoiceType(InvoiceType.SALES).size() + 1));
+        invoiceDTO.setInvoiceNo(String.format("S-%03d", generateInvoiceNo(InvoiceType.SALES)));
         invoiceDTO.setDate(LocalDate.now());
         return invoiceDTO;
     }
