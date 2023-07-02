@@ -78,8 +78,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean isDescriptionExist(CategoryDto categoryDto) {
         CompanyDto companyDto = companyService.getCompanyDtoByLoggedInUser();
-        categoryDto.setCompany(companyDto);
-        categoryDto.getCompany().setId(companyDto.getId());
 
         Category category = categoryRepository
                 .findCategoriesByDescriptionAndCompanyTitle(categoryDto.getDescription(),
@@ -87,7 +85,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElse(null);
         if (category == null) return false;
 
-        return Objects.equals(categoryDto.getCompany().getId(), category.getCompany().getId());
+        return !Objects.equals(categoryDto.getId(), category.getId());
     }
 
 
