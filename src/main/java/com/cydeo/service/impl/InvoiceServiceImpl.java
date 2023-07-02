@@ -103,7 +103,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceDto approve(Long id) {
-        return null;
+        Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such element in the system"));
+
+        invoiceDB.setInvoiceStatus(InvoiceStatus.APPROVED);
+
+        invoiceRepository.save(invoiceDB);
+        return mapperUtil.convert(invoiceDB, new InvoiceDto());
     }
 
     @Override
@@ -128,7 +133,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return listOfAllInvoiceByTypeAndCompany.size() + 1;
     }
     public List<InvoiceDto> calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType type) {
-        List<Invoice> invoices = invoiceRepository.findAllByInvoiceType(type);
+        List<Invoice> invoices = invoiceRepository.findByCompanyTitleAndInvoiceTypeSorted(companyService.getCompanyDtoByLoggedInUser().getTitle(),type);
         return invoices.stream().map(i -> mapperUtil.convert(i,new InvoiceDto()))
                 .map(this::calculateInvoiceSummary)
                 .collect(Collectors.toList());
