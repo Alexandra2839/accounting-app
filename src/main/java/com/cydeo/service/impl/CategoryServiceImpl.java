@@ -10,6 +10,7 @@ import com.cydeo.service.CompanyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,15 +33,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> listOfCategories() {
-        CompanyDto dto = companyService.getCompanyDtoByLoggedInUser();
-        return categoryRepository.findAll().stream()
-                .filter(c -> c.getCompany().getId() == dto.getId())
-                .map(c -> mapperUtil.convert(c, new CategoryDto()))
+        List<Category> categoryList=  categoryRepository
+                .getAllProductsByCompanySorted(companyService.getCompanyDtoByLoggedInUser().getId());
+
+        return categoryList.stream()
+                .map(c->mapperUtil.convert(c,new CategoryDto()))
                 .collect(Collectors.toList());
+
+
     }
 
     @Override
     public CategoryDto save(CategoryDto categoryDto) {
+        categoryDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
+
         Category category = mapperUtil.convert(categoryDto, new Category());
         categoryRepository.save(category);
         return mapperUtil.convert(category, new CategoryDto());
@@ -48,11 +54,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
-        Category categoryInDB = categoryRepository.findByIdAndIsDeleted(categoryDto.getId(), false);
-        Category convertedCategory = mapperUtil.convert(categoryDto, new Category());
-        convertedCategory.setId(categoryInDB.getId());
-        categoryRepository.save(convertedCategory);
-        return mapperUtil.convert(convertedCategory, new CategoryDto());
+        Category categoryInDB = categoryRepository.findById(categoryDto.getId())
+                .orElseThrow(()->new NoSuchElementException("Category has not been found"));
+
+        categoryDto.setId(categoryInDB.getId());
+        categoryDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
+
+        categoryRepository.save(mapperUtil.convert(categoryDto,new Category()));
+
+        return mapperUtil.convert(categoryInDB,new CategoryDto());
     }
 
     @Override
