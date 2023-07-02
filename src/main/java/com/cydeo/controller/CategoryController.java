@@ -4,7 +4,10 @@ import com.cydeo.dto.CategoryDto;
 import com.cydeo.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/categories")
@@ -28,7 +31,23 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public String createCategory(@ModelAttribute("newCategory") CategoryDto categoryDto, Model model) {
+    public String createCategory(@Valid @ModelAttribute("newCategory") CategoryDto categoryDto,
+                                 BindingResult bindingResult, Model model) {
+
+        if (categoryService.isDescriptionExist(categoryDto)){
+            bindingResult.rejectValue("description"," ","This description is already exists.");
+        }
+
+        if (bindingResult.hasErrors()){
+
+            return "category/category-create";
+        }
+
+
+
+
+
+
         categoryService.save(categoryDto);
         return "redirect:/categories/list";
     }
@@ -40,7 +59,17 @@ public class CategoryController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateCategory(@PathVariable Long id, @ModelAttribute("category") CategoryDto categoryDto) {
+    public String updateCategory( @PathVariable Long id,@Valid @ModelAttribute("category") CategoryDto categoryDto
+            , BindingResult bindingResult, Model model) {
+
+        if (categoryService.isDescriptionExist(categoryDto)){
+            bindingResult.rejectValue("description"," ","This description is already exists.");
+        }
+
+        if (bindingResult.hasErrors()){
+            model.addAttribute("category", categoryDto);
+            return "category/category-update";
+        }
 
         categoryService.update(categoryDto);
         return "redirect:/categories/list";
