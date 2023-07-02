@@ -16,4 +16,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
 
     @Query("SELECT cv FROM Invoice cv WHERE cv.company.title = ?1 and cv.invoiceType = ?2 ORDER BY cv.clientVendor.clientVendorName")
     List<Invoice> findByCompanyTitleAndInvoiceType(@Param("companyTitle") String companyTitle, @Param("clientVendorType") InvoiceType invoiceType);
+
+    @Query("SELECT cv FROM Invoice cv WHERE cv.company.title = ?1 and cv.invoiceType = ?2 ORDER BY cv.invoiceNo DESC ")
+    List<Invoice> findByCompanyTitleAndInvoiceTypeSorted(@Param("companyTitle") String companyTitle, @Param("clientVendorType") InvoiceType invoiceType);
 }
+
