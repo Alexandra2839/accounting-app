@@ -109,7 +109,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDto createNewSalesInvoice() {
         InvoiceDto invoiceDTO = new InvoiceDto();
-        invoiceDTO.setInvoiceNo(String.format("P-%03d", generateInvoiceNo(InvoiceType.PURCHASE)));
+        invoiceDTO.setInvoiceNo(String.format("S-%03d", generateInvoiceNo(InvoiceType.SALES)));
         invoiceDTO.setDate(LocalDate.now());
         return invoiceDTO;
     }
