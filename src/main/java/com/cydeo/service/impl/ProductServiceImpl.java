@@ -1,6 +1,7 @@
 package com.cydeo.service.impl;
 
 
+import com.cydeo.dto.CompanyDto;
 import com.cydeo.dto.ProductDto;
 import com.cydeo.entity.Product;
 import com.cydeo.mapper.MapperUtil;
@@ -75,7 +76,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean isNameExist(ProductDto productDto) {
 
-        Product product = productRepository.findProductByName(productDto.getName()).orElse(null);
+        CompanyDto companyDto= companyService.getCompanyDtoByLoggedInUser();
+        Product product = productRepository
+                .findProductByNameAndCategory_Company_Title(productDto.getName(),companyDto.getTitle())
+                .orElse(null);
 
         if (product == null) return false;
 

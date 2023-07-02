@@ -1,37 +1,37 @@
 package com.cydeo.dto;
 
 import com.cydeo.enums.ProductUnit;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDto {
 
     private Long id;
-
     @NotBlank(message = "Product Name is required field.")
-    @Size(min = 2, max = 100)
+    @Size(min = 2, max = 100, message = "Product Name must be between 2 and 100 characters long.")
     private String name;
-
     private Integer quantityInStock;
 
-    @NotNull(message = "Low Limit Alert is a required field."
-            + " Low Limit Alert should be at least 1.")
+    @NotNull(message = "Low Limit Alert is a required field.")
+    @Min(value = 1, message = "Low Limit Alert should be at least 1.")
     private Integer lowLimitAlert;
 
-    @NotNull(message = "Please select a Product Unit." +
-            "Product Unit is a required field.")
+    @NotNull(message = "Product Unit is a required field.")
     private ProductUnit productUnit;
 
-
-    @NotNull(message = "Please select a category." +
-            "Category is a required field.")
     private CategoryDto category;
 
+    private List<InvoiceProductDto> invoiceProducts;
 }
