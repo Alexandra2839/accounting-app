@@ -1,7 +1,9 @@
 package com.cydeo.service.impl;
 
 import com.cydeo.dto.CategoryDto;
+import com.cydeo.dto.CompanyDto;
 import com.cydeo.entity.Category;
+import com.cydeo.entity.Company;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CategoryRepository;
 import com.cydeo.service.CategoryService;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,17 +35,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> listOfCategories() {
+        List<Category> categoryList = categoryRepository
+                .getAllProductsByCompanySorted(companyService.getCompanyDtoByLoggedInUser().getId());
 
-        return categoryRepository.findAll().stream()
-                .map(C -> mapperUtil.convert(C, new CategoryDto()))
+        return categoryList.stream()
+                .map(c -> mapperUtil.convert(c, new CategoryDto()))
                 .collect(Collectors.toList());
+
+
     }
 
     @Override
     public CategoryDto save(CategoryDto categoryDto) {
-        categoryDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
-
         Category category = mapperUtil.convert(categoryDto, new Category());
+        category.setCompany(mapperUtil.convert(companyService.getCompanyDtoByLoggedInUser(), new Company()));
         categoryRepository.save(category);
         return mapperUtil.convert(category, new CategoryDto());
     }
@@ -50,14 +56,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
         Category categoryInDB = categoryRepository.findById(categoryDto.getId())
-                .orElseThrow(()->new NoSuchElementException("Category has not been found"));
+                .orElseThrow(() -> new NoSuchElementException("Category has not been found"));
 
-       categoryDto.setId(categoryInDB.getId());
-       categoryDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
+        categoryDto.setId(categoryInDB.getId());
+        categoryDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
 
-       categoryRepository.save(mapperUtil.convert(categoryDto,new Category()));
+        categoryRepository.save(mapperUtil.convert(categoryDto, new Category()));
 
-       return mapperUtil.convert(categoryInDB,new CategoryDto());
+        return mapperUtil.convert(categoryInDB, new CategoryDto());
     }
 
     @Override
@@ -70,13 +76,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> listAllCategoriesByCompany() {
+    public boolean isDescriptionExist(CategoryDto categoryDto) {
+        CompanyDto companyDto = companyService.getCompanyDtoByLoggedInUser();
 
-        List<Category> categoryList=  categoryRepository
-                .getAllProductsByCompanySorted(companyService.getCompanyDtoByLoggedInUser().getId());
+        Category category = categoryRepository
+                .findCategoriesByDescriptionAndCompanyTitle(categoryDto.getDescription(),
+                        companyDto.getTitle())
+                .orElse(null);
+        if (category == null) return false;
 
-        return categoryList.stream()
-               .map(c->mapperUtil.convert(c,new CategoryDto()))
-               .collect(Collectors.toList());
+        return !Objects.equals(categoryDto.getId(), category.getId());
     }
+
+
 }

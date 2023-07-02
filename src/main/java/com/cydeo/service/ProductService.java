@@ -16,5 +16,7 @@ public interface ProductService {
 
     ProductDto deleteProduct(ProductDto productDto);
 
+    boolean isNameExist(ProductDto productDto);
+
 
 }
