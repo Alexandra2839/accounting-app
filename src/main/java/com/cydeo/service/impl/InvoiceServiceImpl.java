@@ -90,15 +90,21 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDto update(InvoiceDto invoiceDto) {
-        Invoice invoiceInDb = invoiceRepository.findById(invoiceDto.getId()).orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
-        Invoice convertedInvoice = mapperUtil.convert(invoiceDto, new Invoice());
+    public InvoiceDto update(InvoiceDto invoiceDto, Long id) {//apple
+        Invoice invoiceInDb = invoiceRepository.findById(id)//orange
+                .orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
 
-        convertedInvoice.setClientVendor(invoiceInDb.getClientVendor());
 
-        invoiceRepository.save(convertedInvoice);
+        Invoice convertedInvoice = mapperUtil.convert(invoiceDto, new Invoice());//apple
+        //orange      =====              apple
+        convertedInvoice.setId(invoiceInDb.getId());
+        convertedInvoice.setInvoiceStatus(invoiceInDb.getInvoiceStatus());
+        convertedInvoice.setCompany(invoiceInDb.getCompany());
+        convertedInvoice.setInvoiceType(invoiceInDb.getInvoiceType());
 
-        return mapperUtil.convert(convertedInvoice, new InvoiceDto());
+        Invoice save = invoiceRepository.save(convertedInvoice);//orange
+
+        return mapperUtil.convert(save, new InvoiceDto());//orange
     }
 
     @Override

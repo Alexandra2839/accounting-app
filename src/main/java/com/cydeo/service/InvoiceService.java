@@ -10,7 +10,7 @@ public interface InvoiceService {
     InvoiceDto findById(Long id);
     List<InvoiceDto> listOfAllInvoices();
     List<InvoiceDto> listOfPurchasedInvoices(String s);
-    InvoiceDto update(InvoiceDto invoiceDto);
+    InvoiceDto update(InvoiceDto invoiceDto, Long id);
     InvoiceDto save(InvoiceDto invoiceDto);
     InvoiceDto saveSalesInvoice(InvoiceDto invoiceDto);
     InvoiceDto delete(Long id);
