@@ -1,6 +1,7 @@
 package com.cydeo.service;
 
 import com.cydeo.dto.CategoryDto;
+import com.cydeo.dto.CompanyDto;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ public interface CategoryService {
     CategoryDto update(CategoryDto categoryDto);
 
     CategoryDto delete(CategoryDto categoryDto);
+
+    boolean isDescriptionExist(CategoryDto categoryDto);
 
 
 }
