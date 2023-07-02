@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface InvoiceProductRepository extends JpaRepository<InvoiceProduct,Long> {
 
-    List<InvoiceProduct> findAllByProductId(Long id);
+
     List<InvoiceProduct> findByInvoiceId(Long id);
     InvoiceProduct findByInvoiceIdAndId(Long invoiceId, Long productId);
+
 }
