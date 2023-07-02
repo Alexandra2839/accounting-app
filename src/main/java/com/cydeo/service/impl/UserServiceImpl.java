@@ -49,15 +49,17 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> listAllUsers() {
 
         if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
-            return userRepository.findAllByRoleDescription("Admin").stream()
+            return userRepository.findAllByRoleDescriptionOrderByCompanyTitleAscRoleDescriptionAsc("Admin").stream()
                     .map(user -> mapperUtil.convert(user, new UserDto()))
+                    .map(userDto -> setOnlyAdmin(userDto))
                     .collect(Collectors.toList());
         }
 
         if (securityService.getLoggedInUser().getRole().getDescription().equals("Admin")) {
-            return userRepository.findAllByCompanyTitle(securityService.getLoggedInUser().getCompany().getTitle())
+            return userRepository.findAllByCompanyTitleOrderByCompanyTitleAscRoleDescriptionAsc(securityService.getLoggedInUser().getCompany().getTitle())
                     .stream()
                     .map(user -> mapperUtil.convert(user, new UserDto()))
+                    .map(userDto -> setOnlyAdmin(userDto))
                     .collect(Collectors.toList());
         }
 
@@ -116,10 +118,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setOnlyAdmin(UserDto userDto) {
+    public UserDto setOnlyAdmin(UserDto userDto) {
 
-        if (userRepository.countByCompanyTitleAndRoleDescription(userDto.getCompany().getTitle(), userDto.getRole().getDescription()) == 1)
+        if (userRepository.countByCompanyTitleAndRoleDescription(userDto.getCompany().getTitle(), userDto.getRole().getDescription()) == 1
+        && userDto.getRole().getDescription().equals("Admin")) {
             userDto.setOnlyAdmin(true);
+            return userDto;
+        }
+        return userDto;
 
     }
 }

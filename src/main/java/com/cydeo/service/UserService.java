@@ -21,5 +21,5 @@ public interface UserService {
 
     boolean isEmailExist(UserDto userDto);
 
-    void setOnlyAdmin(UserDto userDto);
+    UserDto setOnlyAdmin(UserDto userDto);
 }
