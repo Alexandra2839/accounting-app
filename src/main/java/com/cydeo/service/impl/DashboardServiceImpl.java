@@ -74,7 +74,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<CurrencyDto> getRates() {
+    public CurrencyDto getRates() {
 
         return currencyClient.getCurrencyRates();
     }

@@ -1,6 +1,7 @@
 
 package com.cydeo.dto;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Generated;
@@ -22,7 +23,7 @@ public class CurrencyDto {
     @JsonProperty("date")
     private String date;
     @JsonProperty("usd")
-    private Usd usd;
+    private Map<String, BigDecimal> usd;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
@@ -37,12 +38,12 @@ public class CurrencyDto {
     }
 
     @JsonProperty("usd")
-    public Usd getUsd() {
+    public Map<String, BigDecimal> getUsd() {
         return usd;
     }
 
     @JsonProperty("usd")
-    public void setUsd(Usd usd) {
+    public void setUsd(Map<String, BigDecimal> usd) {
         this.usd = usd;
     }
 
@@ -56,4 +57,21 @@ public class CurrencyDto {
         this.additionalProperties.put(name, value);
     }
 
+    public BigDecimal getEuro(){
+        return usd.get("eur");
+    }
+
+    public BigDecimal getBritishPound(){
+        return usd.get("gbp");
+    }
+
+    public BigDecimal getCanadianDollar(){
+        return usd.get("cad");
+    }
+    public BigDecimal getJapaneseYen(){
+        return usd.get("jpy");
+    }
+    public BigDecimal getIndianRupee(){
+        return usd.get("inr");
+    }
 }

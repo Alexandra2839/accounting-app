@@ -10,5 +10,5 @@ import java.util.List;
 public interface CurrencyClient {
 
     @GetMapping("/gh/fawazahmed0/currency-api@1/latest/currencies/usd.json")
-    List<CurrencyDto> getCurrencyRates();
+    CurrencyDto getCurrencyRates();
 }

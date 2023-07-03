@@ -13,5 +13,5 @@ public interface DashboardService {
 
     BigDecimal calculateTotalSales();
 
-    List<CurrencyDto> getRates();
+    CurrencyDto getRates();
 }
