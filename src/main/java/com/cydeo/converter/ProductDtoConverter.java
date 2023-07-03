@@ -16,6 +16,9 @@ public class ProductDtoConverter implements Converter<String, ProductDto> {
 
     @Override
     public ProductDto convert(String source) {
+        if (source == null || source.equals("")) {
+            return null;
+        }
         return productService.findProductById(Long.parseLong(source));
     }
 }
