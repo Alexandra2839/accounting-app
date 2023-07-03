@@ -1,5 +1,7 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.client.CurrencyClient;
+import com.cydeo.dto.CurrencyDto;
 import com.cydeo.dto.InvoiceDto;
 import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.enums.InvoiceStatus;
@@ -27,11 +29,14 @@ public class DashboardServiceImpl implements DashboardService {
     private final InvoiceRepository invoiceRepository;
     private final MapperUtil mapperUtil;
 
-    public DashboardServiceImpl(InvoiceProductRepository invoiceProductRepository, SecurityService securityService, InvoiceRepository invoiceRepository, MapperUtil mapperUtil) {
+    private final CurrencyClient currencyClient;
+
+    public DashboardServiceImpl(InvoiceProductRepository invoiceProductRepository, SecurityService securityService, InvoiceRepository invoiceRepository, MapperUtil mapperUtil, CurrencyClient currencyClient) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.securityService = securityService;
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
+        this.currencyClient = currencyClient;
     }
 
     @Override
@@ -66,6 +71,12 @@ public class DashboardServiceImpl implements DashboardService {
 
 
         return sum.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public CurrencyDto getRates() {
+
+        return currencyClient.getCurrencyRates();
     }
 
     @Override
