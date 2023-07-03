@@ -23,5 +23,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     List<Invoice> findAllByInvoiceTypeAndInvoiceStatusAndCompanyTitle(InvoiceType type, InvoiceStatus status, String title);
 
+    List<Invoice> findTop3ByCompanyTitleAndInvoiceStatusOrderByDateDesc(String Title, InvoiceStatus status);
+
 }
 
