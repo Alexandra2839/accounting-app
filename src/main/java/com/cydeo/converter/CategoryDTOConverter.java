@@ -15,6 +15,9 @@ public class CategoryDTOConverter implements Converter<String, CategoryDto> {
 
     @Override
     public CategoryDto convert(String source) {
+        if (source == null || source.equals("")) {
+            return null;
+        }
         return categoryService.findById(Long.parseLong(source));
     }
 }

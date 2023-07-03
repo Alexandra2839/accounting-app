@@ -3,16 +3,14 @@ package com.cydeo.service.impl;
 import com.cydeo.dto.InvoiceDto;
 import com.cydeo.entity.Invoice;
 import com.cydeo.entity.InvoiceProduct;
-import com.cydeo.enums.ClientVendorType;
 import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
 import com.cydeo.mapper.MapperUtil;
-import com.cydeo.repository.CompanyRepository;
 import com.cydeo.repository.InvoiceProductRepository;
 import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.CompanyService;
 import com.cydeo.service.InvoiceService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cydeo.service.SecurityService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +27,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceProductRepository invoiceProductRepository;
     private final CompanyService companyService;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductRepository invoiceProductRepository, @Lazy CompanyService companyService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductRepository invoiceProductRepository, @Lazy CompanyService companyService, SecurityService securityService) {
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.invoiceProductRepository = invoiceProductRepository;
@@ -45,7 +43,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDto> listOfAllInvoices() {
         List<Invoice> all = invoiceRepository.findAll();
-        return  all.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto())).collect(Collectors.toList());
+        return all.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto())).collect(Collectors.toList());
     }
 
     @Override
@@ -67,7 +65,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return converted;
     }
+
     public InvoiceDto saveSalesInvoice(InvoiceDto invoiceDto) {
+
+        invoiceDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
 
         Invoice invoice1 = mapperUtil.convert(invoiceDto, new Invoice());
         invoice1.setId(invoiceDto.getId());
@@ -82,9 +83,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDto delete(Long id) {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
+        List<InvoiceProduct> invoiceProductList= invoiceProductRepository.findByInvoiceId(id);
+        invoiceProductList.forEach(p -> p.setIsDeleted(true));
         invoice.setIsDeleted(true);
         invoiceRepository.save(invoice);
-        return mapperUtil.convert(invoice,new InvoiceDto());
+        return mapperUtil.convert(invoice, new InvoiceDto());
     }
 
     @Override
@@ -101,13 +104,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceDto approve(Long id) {
-        return null;
+        Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such element in the system"));
+
+        invoiceDB.setInvoiceStatus(InvoiceStatus.APPROVED);
+
+        invoiceRepository.save(invoiceDB);
+        return mapperUtil.convert(invoiceDB, new InvoiceDto());
     }
 
     @Override
     public InvoiceDto createNewSalesInvoice() {
         InvoiceDto invoiceDTO = new InvoiceDto();
-        invoiceDTO.setInvoiceNo("S-00" + (invoiceRepository.findAllByInvoiceType(InvoiceType.SALES).size() + 1));
+        invoiceDTO.setInvoiceNo(String.format("S-%03d", generateInvoiceNo(InvoiceType.SALES)));
         invoiceDTO.setDate(LocalDate.now());
         return invoiceDTO;
     }
@@ -121,17 +129,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceDTO.setInvoiceType(InvoiceType.PURCHASE);
         return invoiceDTO;
     }
-    private Integer generateInvoiceNo(InvoiceType invoiceType){
+
+    private Integer generateInvoiceNo(InvoiceType invoiceType) {
         List<Invoice> listOfAllInvoiceByTypeAndCompany = invoiceRepository.findByCompanyTitleAndInvoiceType(companyService.getCompanyDtoByLoggedInUser().getTitle(), invoiceType);
         return listOfAllInvoiceByTypeAndCompany.size() + 1;
     }
+
     public List<InvoiceDto> calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType type) {
-        List<Invoice> invoices = invoiceRepository.findAllByInvoiceType(type);
-        return invoices.stream().map(i -> mapperUtil.convert(i,new InvoiceDto()))
+        List<Invoice> invoices = invoiceRepository.findByCompanyTitleAndInvoiceTypeSorted(companyService.getCompanyDtoByLoggedInUser().getTitle(), type);
+        return invoices.stream().map(i -> mapperUtil.convert(i, new InvoiceDto()))
                 .map(this::calculateInvoiceSummary)
                 .collect(Collectors.toList());
 
     }
+
     private InvoiceDto calculateInvoiceSummary(InvoiceDto invoiceDto) {
         List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findByInvoiceId(invoiceDto.getId());
 
