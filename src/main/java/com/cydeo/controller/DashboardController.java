@@ -33,7 +33,7 @@ public class DashboardController {
                 "profitLoss", dashboardService.calculateTotalProfitLoss()
         );
         model.addAttribute("summaryNumbers", summaryNumbers);
-        model.addAttribute("invoices", new ArrayList<InvoiceDto>());
+        model.addAttribute("invoices", dashboardService.list3LastApprovedInvoices());
         model.addAttribute("exchangeRates", new CurrencyDto());
         model.addAttribute("title", "Cydeo Accounting-Dashboard");
         return "dashboard";
