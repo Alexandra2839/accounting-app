@@ -1,6 +1,9 @@
 package com.cydeo.service;
 
+import com.cydeo.dto.CurrencyDto;
+
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface DashboardService {
 
@@ -9,4 +12,6 @@ public interface DashboardService {
     BigDecimal calculateTotalCost();
 
     BigDecimal calculateTotalSales();
+
+    List<CurrencyDto> getRates();
 }
