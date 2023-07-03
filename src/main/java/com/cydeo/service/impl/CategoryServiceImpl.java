@@ -8,6 +8,7 @@ import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CategoryRepository;
 import com.cydeo.service.CategoryService;
 import com.cydeo.service.CompanyService;
+import com.cydeo.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final MapperUtil mapperUtil;
     private final CompanyService companyService;
+
 
     public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, CompanyService companyService) {
         this.categoryRepository = categoryRepository;
@@ -39,7 +41,11 @@ public class CategoryServiceImpl implements CategoryService {
                 .getAllProductsByCompanySorted(companyService.getCompanyDtoByLoggedInUser().getId());
 
         return categoryList.stream()
-                .map(c -> mapperUtil.convert(c, new CategoryDto()))
+                .map(c -> {
+                    CategoryDto dto = mapperUtil.convert(c, new CategoryDto());
+                    dto.setHasProduct(!c.getListOfProducts().isEmpty());
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
 
@@ -87,6 +93,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         return !Objects.equals(categoryDto.getId(), category.getId());
     }
+
+
 
 
 }
