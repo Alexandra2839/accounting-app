@@ -2,8 +2,6 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.CurrencyDto;
 import com.cydeo.dto.InvoiceDto;
-import com.cydeo.service.DashboardService;
-import com.cydeo.service.InvoiceService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,20 +15,14 @@ import java.util.Map;
 @RequestMapping("/dashboard")
 public class DashboardController {
 
-    private final DashboardService dashboardService;
-
-    public DashboardController(InvoiceService invoiceService, DashboardService dashboardService) {
-        this.dashboardService = dashboardService;
-    }
-
-
     @GetMapping
-    public String getDash(Model model) {
+    public String getDash(Model model){
 
+        // this method has only dummy info and should be modified in accordance with user stories.
         Map<String, BigDecimal> summaryNumbers = Map.of(
-                "totalCost", dashboardService.calculateTotalCost(),
-                "totalSales", dashboardService.calculateTotalSales(),
-                "profitLoss", dashboardService.calculateTotalProfitLoss()
+                "totalCost", BigDecimal.TEN,
+                "totalSales", BigDecimal.TEN,
+                "profitLoss", BigDecimal.ZERO
         );
         model.addAttribute("summaryNumbers", summaryNumbers);
         model.addAttribute("invoices", new ArrayList<InvoiceDto>());
