@@ -23,7 +23,6 @@ public class DashboardController {
     @GetMapping
     public String getDash(Model model){
 
-        // this method has only dummy info and should be modified in accordance with user stories.
         Map<String, BigDecimal> summaryNumbers = Map.of(
                 "totalCost", dashboardService.calculateTotalCost(),
                 "totalSales", dashboardService.calculateTotalSales(),
