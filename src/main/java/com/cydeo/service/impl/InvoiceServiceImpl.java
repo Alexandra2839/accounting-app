@@ -83,6 +83,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDto delete(Long id) {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
+        List<InvoiceProduct> invoiceProductList= invoiceProductRepository.findByInvoiceId(id);
+        invoiceProductList.forEach(p -> p.setIsDeleted(true));
         invoice.setIsDeleted(true);
         invoiceRepository.save(invoice);
         return mapperUtil.convert(invoice, new InvoiceDto());
