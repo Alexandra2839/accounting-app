@@ -2,6 +2,7 @@ package com.cydeo.repository;
 
 import com.cydeo.entity.Invoice;
 import com.cydeo.enums.ClientVendorType;
+import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +20,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
 
     @Query("SELECT cv FROM Invoice cv WHERE cv.company.title = ?1 and cv.invoiceType = ?2 ORDER BY cv.invoiceNo DESC ")
     List<Invoice> findByCompanyTitleAndInvoiceTypeSorted(@Param("companyTitle") String companyTitle, @Param("clientVendorType") InvoiceType invoiceType);
+
+    List<Invoice> findAllByInvoiceTypeAndInvoiceStatusAndCompanyTitle(InvoiceType type, InvoiceStatus status, String title);
 }
 
