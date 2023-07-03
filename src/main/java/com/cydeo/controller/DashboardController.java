@@ -2,6 +2,7 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.CurrencyDto;
 import com.cydeo.service.DashboardService;
+import com.cydeo.dto.InvoiceDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class DashboardController {
         );
         model.addAttribute("summaryNumbers", summaryNumbers);
         model.addAttribute("invoices", dashboardService.list3LastApprovedInvoices());
-        model.addAttribute("exchangeRates", new CurrencyDto());
+        model.addAttribute("exchangeRates", dashboardService.getRates());
         model.addAttribute("title", "Cydeo Accounting-Dashboard");
         return "dashboard";
     }

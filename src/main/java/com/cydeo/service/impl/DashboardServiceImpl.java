@@ -1,5 +1,7 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.client.CurrencyClient;
+import com.cydeo.dto.CurrencyDto;
 import com.cydeo.dto.InvoiceDto;
 import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.enums.InvoiceStatus;
@@ -28,12 +30,15 @@ public class DashboardServiceImpl implements DashboardService {
     private final InvoiceService invoiceService;
     private final MapperUtil mapperUtil;
 
-    public DashboardServiceImpl(InvoiceProductRepository invoiceProductRepository, SecurityService securityService, InvoiceRepository invoiceRepository, InvoiceService invoiceService, MapperUtil mapperUtil) {
+    private final CurrencyClient currencyClient;
+
+    public DashboardServiceImpl(InvoiceProductRepository invoiceProductRepository, SecurityService securityService, InvoiceRepository invoiceRepository, InvoiceService invoiceService, CurrencyClient currencyClient, MapperUtil mapperUtil) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.securityService = securityService;
         this.invoiceRepository = invoiceRepository;
         this.invoiceService = invoiceService;
         this.mapperUtil = mapperUtil;
+        this.currencyClient = currencyClient;
     }
 
     @Override
@@ -77,6 +82,12 @@ public class DashboardServiceImpl implements DashboardService {
                 .stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto()))
                 .map(invoiceDto -> invoiceService.calculateInvoiceSummary(invoiceDto))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CurrencyDto getRates() {
+
+        return currencyClient.getCurrencyRates();
     }
 
     @Override
