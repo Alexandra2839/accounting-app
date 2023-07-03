@@ -13,7 +13,7 @@ public interface InvoiceService {
 
     List<InvoiceDto> listOfPurchasedInvoices(String s);
 
-    InvoiceDto update(InvoiceDto invoiceDto);
+    InvoiceDto update(InvoiceDto invoiceDto, Long id);
 
     InvoiceDto save(InvoiceDto invoiceDto);
 

@@ -145,7 +145,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .collect(Collectors.toList());
 
     }
-    private InvoiceDto calculateInvoiceSummary(InvoiceDto invoiceDto) {
+    public InvoiceDto calculateInvoiceSummary(InvoiceDto invoiceDto) {
         List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findByInvoiceId(invoiceDto.getId());
 
         BigDecimal totalPriceWithoutTax = invoiceProducts.stream()
