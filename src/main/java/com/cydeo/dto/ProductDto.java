@@ -28,9 +28,10 @@ public class ProductDto {
     @Min(value = 1, message = "Low Limit Alert should be at least 1.")
     private Integer lowLimitAlert;
 
-    @NotNull(message = "Product Unit is a required field.")
+    @NotNull(message = "Please select a Product Unit.")
     private ProductUnit productUnit;
 
+    @NotNull(message = "Please select a category.")
     private CategoryDto category;
 
     private List<InvoiceProductDto> invoiceProducts;
