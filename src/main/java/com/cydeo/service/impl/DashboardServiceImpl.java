@@ -10,6 +10,7 @@ import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceProductRepository;
 import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.DashboardService;
+import com.cydeo.service.InvoiceService;
 import com.cydeo.service.SecurityService;
 import org.springframework.stereotype.Service;
 
@@ -25,16 +26,17 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final InvoiceProductRepository invoiceProductRepository;
     private final SecurityService securityService;
-
     private final InvoiceRepository invoiceRepository;
+    private final InvoiceService invoiceService;
     private final MapperUtil mapperUtil;
 
     private final CurrencyClient currencyClient;
 
-    public DashboardServiceImpl(InvoiceProductRepository invoiceProductRepository, SecurityService securityService, InvoiceRepository invoiceRepository, MapperUtil mapperUtil, CurrencyClient currencyClient) {
+    public DashboardServiceImpl(InvoiceProductRepository invoiceProductRepository, SecurityService securityService, InvoiceRepository invoiceRepository, InvoiceService invoiceService, CurrencyClient currencyClient, MapperUtil mapperUtil) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.securityService = securityService;
         this.invoiceRepository = invoiceRepository;
+        this.invoiceService = invoiceService;
         this.mapperUtil = mapperUtil;
         this.currencyClient = currencyClient;
     }
@@ -46,7 +48,7 @@ public class DashboardServiceImpl implements DashboardService {
                         InvoiceType.PURCHASE, InvoiceStatus.APPROVED, securityService.getLoggedInUser().getCompany().getTitle())
                 .stream()
                 .map(invoice -> mapperUtil.convert(invoice, new InvoiceDto()))
-                .map(invoiceDto -> calculateInvoiceSummary(invoiceDto))
+                .map(invoiceDto -> invoiceService.calculateInvoiceSummary(invoiceDto))
                 .collect(Collectors.toList());
 
         List<BigDecimal> sum = new ArrayList<>();
@@ -63,7 +65,7 @@ public class DashboardServiceImpl implements DashboardService {
                         InvoiceType.SALES, InvoiceStatus.APPROVED, securityService.getLoggedInUser().getCompany().getTitle())
                 .stream()
                 .map(invoice -> mapperUtil.convert(invoice, new InvoiceDto()))
-                .map(invoiceDto -> calculateInvoiceSummary(invoiceDto))
+                .map(invoiceDto -> invoiceService.calculateInvoiceSummary(invoiceDto))
                 .collect(Collectors.toList());
 
         List<BigDecimal> sum = new ArrayList<>();
@@ -71,6 +73,15 @@ public class DashboardServiceImpl implements DashboardService {
 
 
         return sum.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public List<InvoiceDto> list3LastApprovedInvoices() {
+        return invoiceRepository.findTop3ByCompanyTitleAndInvoiceStatusOrderByDateDesc(
+                securityService.getLoggedInUser().getCompany().getTitle(),InvoiceStatus.APPROVED)
+                .stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto()))
+                .map(invoiceDto -> invoiceService.calculateInvoiceSummary(invoiceDto))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -91,27 +102,4 @@ public class DashboardServiceImpl implements DashboardService {
         return sum.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private InvoiceDto calculateInvoiceSummary(InvoiceDto invoiceDto) {
-        List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findByInvoiceId(invoiceDto.getId());
-
-        BigDecimal totalPriceWithoutTax = invoiceProducts.stream()
-                .map(invoiceProduct -> invoiceProduct.getPrice().multiply(BigDecimal.valueOf(invoiceProduct.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        int totalTax = invoiceProducts.stream()
-                .mapToInt(invoiceProduct -> invoiceProduct.getPrice()
-                        .multiply(BigDecimal.valueOf(invoiceProduct.getQuantity()))
-                        .multiply(BigDecimal.valueOf(invoiceProduct.getTax()))
-                        .divide(BigDecimal.valueOf(100))
-                        .intValue())
-                .sum();
-
-        BigDecimal totalPriceWithTax = totalPriceWithoutTax.add(BigDecimal.valueOf(totalTax));
-
-        invoiceDto.setPrice(totalPriceWithoutTax);
-        invoiceDto.setTax(totalTax);
-        invoiceDto.setTotal(totalPriceWithTax);
-
-        return invoiceDto;
-    }
 }
