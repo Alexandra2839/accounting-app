@@ -7,10 +7,7 @@ import com.cydeo.dto.InvoiceProductDto;
 import com.cydeo.entity.Invoice;
 import com.cydeo.enums.ClientVendorType;
 import com.cydeo.enums.InvoiceType;
-import com.cydeo.service.ClientVendorService;
-import com.cydeo.service.InvoiceProductService;
-import com.cydeo.service.InvoiceService;
-import com.cydeo.service.ProductService;
+import com.cydeo.service.*;
 import com.cydeo.service.impl.InvoiceProductServiceImpl;
 import com.cydeo.service.impl.InvoiceServiceImpl;
 import org.springframework.stereotype.Controller;
@@ -28,13 +25,15 @@ public class PurchasesInvoiceController {
     private final InvoiceProductService invoiceProductService;
     private final ClientVendorService clientVendorService;
     private final ProductService productService;
+    private final CompanyService companyService;
 
 
-    public PurchasesInvoiceController(InvoiceService invoiceService,ProductService productService, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService) {
+    public PurchasesInvoiceController(InvoiceService invoiceService, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService, ProductService productService, CompanyService companyService) {
         this.invoiceService = invoiceService;
         this.invoiceProductService = invoiceProductService;
         this.clientVendorService = clientVendorService;
         this.productService = productService;
+        this.companyService = companyService;
     }
 
     @GetMapping("/create")
@@ -132,11 +131,17 @@ public class PurchasesInvoiceController {
         return "redirect:/purchaseInvoices/list";
     }
 
-//    @GetMapping("print/{id}")
-//    public String printPurchasedInvoice(@PathVariable Long id) {
-////        invoiceService.print(id);
-//        return "invoice/invoice_print";
-//    }
+    @GetMapping("print/{id}")
+    public String printPurchasedInvoice(@PathVariable Long id, Model model) {
+
+        model.addAttribute("company", companyService.getCompanyDtoByLoggedInUser());
+        model.addAttribute("client", clientVendorService.findById(invoiceService.findById(id).getId()));
+        model.addAttribute("invoice", invoiceService.findById(id));
+        model.addAttribute("invoiceProducts",invoiceProductService.findByInvoiceId(id));
+        model.addAttribute("invoice", invoiceService.calculateInvoiceSummary(invoiceService.findById(id)));
+
+        return "invoice/invoice_print";
+    }
 
 
 
