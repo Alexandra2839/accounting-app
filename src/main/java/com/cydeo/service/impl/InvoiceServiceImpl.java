@@ -125,8 +125,10 @@ public class InvoiceServiceImpl implements InvoiceService {
             Product productEntity = mapperUtil.convert(product,new Product());
 
             productEntity.setQuantityInStock(productEntity.getQuantityInStock() + invoiceProduct.getQuantity());
+            productEntity.setId(product.getId());
             ProductDto productDto = mapperUtil.convert(productEntity, new ProductDto());
-            productService.updateProduct(productDto);
+
+            productService.createProduct(productDto);
         }
 
         invoiceDB.setInvoiceStatus(InvoiceStatus.APPROVED);
