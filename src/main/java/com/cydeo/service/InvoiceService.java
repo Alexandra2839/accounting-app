@@ -22,6 +22,7 @@ public interface InvoiceService {
     InvoiceDto delete(Long id);
 
     InvoiceDto approve(Long id);
+    InvoiceDto approvePurchaseInvoice(Long id);
 
     InvoiceDto createNewSalesInvoice();
 

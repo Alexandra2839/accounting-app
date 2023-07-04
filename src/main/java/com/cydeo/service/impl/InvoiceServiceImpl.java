@@ -1,8 +1,11 @@
 package com.cydeo.service.impl;
 
 import com.cydeo.dto.InvoiceDto;
+import com.cydeo.dto.InvoiceProductDto;
+import com.cydeo.dto.ProductDto;
 import com.cydeo.entity.Invoice;
 import com.cydeo.entity.InvoiceProduct;
+import com.cydeo.entity.Product;
 import com.cydeo.enums.ClientVendorType;
 import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
@@ -12,6 +15,7 @@ import com.cydeo.repository.InvoiceProductRepository;
 import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.CompanyService;
 import com.cydeo.service.InvoiceService;
+import com.cydeo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -28,12 +32,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final MapperUtil mapperUtil;
     private final InvoiceProductRepository invoiceProductRepository;
     private final CompanyService companyService;
+    private final ProductService productService;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductRepository invoiceProductRepository, @Lazy CompanyService companyService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductRepository invoiceProductRepository, CompanyService companyService, ProductService productService) {
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.invoiceProductRepository = invoiceProductRepository;
         this.companyService = companyService;
+        this.productService = productService;
     }
 
     @Override
@@ -108,6 +114,26 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public InvoiceDto approvePurchaseInvoice(Long id) {
+        Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such element in the system"));
+
+        List<InvoiceProduct> listOfInvoiceProductByInvoiceId = invoiceProductRepository.findByInvoiceId(id);
+
+        for (InvoiceProduct invoiceProduct : listOfInvoiceProductByInvoiceId) {
+
+            ProductDto product = productService.findProductById(invoiceProduct.getProduct().getId());
+            Product productEntity = mapperUtil.convert(product,new Product());
+
+            productEntity.setQuantityInStock(productEntity.getQuantityInStock() + invoiceProduct.getQuantity());
+            ProductDto productDto = mapperUtil.convert(productEntity, new ProductDto());
+            productService.updateProduct(productDto);
+        }
+
+        invoiceDB.setInvoiceStatus(InvoiceStatus.APPROVED);
+
+        invoiceRepository.save(invoiceDB);
+        return mapperUtil.convert(invoiceDB, new InvoiceDto());
+    }
     public InvoiceDto approve(Long id) {
         Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such element in the system"));
 
