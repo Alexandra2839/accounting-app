@@ -4,11 +4,9 @@ import com.cydeo.dto.InvoiceDto;
 import com.cydeo.dto.InvoiceProductDto;
 import com.cydeo.enums.ClientVendorType;
 import com.cydeo.enums.InvoiceType;
-import com.cydeo.service.ClientVendorService;
-import com.cydeo.service.InvoiceProductService;
-import com.cydeo.service.InvoiceService;
-import com.cydeo.service.ProductService;
+import com.cydeo.service.*;
 import com.cydeo.service.impl.InvoiceServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +23,8 @@ public class SalesInvoiceController {
     private final InvoiceProductService invoiceProductService;
     private final ClientVendorService clientVendorService;
     private final ProductService productService;
+    @Autowired
+    CompanyService companyService;
 
     public SalesInvoiceController(InvoiceService invoiceService, InvoiceProductService invoiceProductService, ClientVendorService clientVendorService, ProductService productService) {
         this.invoiceService = invoiceService;
@@ -114,6 +114,17 @@ public class SalesInvoiceController {
     public String approveSalesInvoice(@PathVariable Long invoiceId, Model model){
         invoiceService.approve(invoiceId);
         return "redirect:/salesInvoices/list";
+    }
+    @GetMapping("print/{id}")
+    public String printSalesInvoice(@PathVariable Long id, Model model) {
+
+        model.addAttribute("company", companyService.getCompanyDtoByLoggedInUser());
+        model.addAttribute("client", clientVendorService.findById(invoiceService.findById(id).getId()));
+        model.addAttribute("invoice", invoiceService.findById(id));
+        model.addAttribute("invoiceProducts",invoiceProductService.findByInvoiceId(id));
+        model.addAttribute("invoice", invoiceService.calculateInvoiceSummary(invoiceService.findById(id)));
+
+        return "invoice/invoice_print";
     }
 }
 
