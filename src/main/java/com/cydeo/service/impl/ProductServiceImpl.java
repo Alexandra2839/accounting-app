@@ -41,7 +41,13 @@ public class ProductServiceImpl implements ProductService {
         List<Product> list = productRepository
                 .findAllByCompanyAndProductNameSort(companyService.getCompanyDtoByLoggedInUser().getId());
 
-        return list.stream().map(p -> mapper.convert(p, new ProductDto())).collect(Collectors.toList());
+        return list.stream()
+                .map(p -> {
+                    ProductDto dto = mapper.convert(p, new ProductDto());
+                    dto.setHasInvoiceProduct(!p.getInvoiceProducts().isEmpty());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -76,9 +82,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean isNameExist(ProductDto productDto) {
 
-        CompanyDto companyDto= companyService.getCompanyDtoByLoggedInUser();
+        CompanyDto companyDto = companyService.getCompanyDtoByLoggedInUser();
         Product product = productRepository
-                .findProductByNameAndCategory_Company_Title(productDto.getName(),companyDto.getTitle())
+                .findProductByNameAndCategory_Company_Title(productDto.getName(), companyDto.getTitle())
                 .orElse(null);
 
         if (product == null) return false;
