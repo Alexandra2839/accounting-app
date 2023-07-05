@@ -76,7 +76,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         InvoiceProductDto invoiceProductDTO = mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
 
         BigDecimal quantity = new BigDecimal(invoiceProductDTO.getQuantity());
-        BigDecimal tax = new BigDecimal(invoiceProductDTO.getTax());
+        BigDecimal tax = invoiceProductDTO.getTax();
         BigDecimal totalAmountWithoutTax = invoiceProductDTO.getPrice().multiply(quantity);
         BigDecimal totalAmountWithTax = totalAmountWithoutTax.add(totalAmountWithoutTax.multiply(tax).divide(new BigDecimal(100)));
 

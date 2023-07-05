@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -180,18 +181,20 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(invoiceProduct -> invoiceProduct.getPrice().multiply(BigDecimal.valueOf(invoiceProduct.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        int totalTax = invoiceProducts.stream()
-                .mapToInt(invoiceProduct -> invoiceProduct.getPrice()
+        BigDecimal totalTax = invoiceProducts.stream()
+                .map(invoiceProduct -> invoiceProduct.getPrice()
                         .multiply(BigDecimal.valueOf(invoiceProduct.getQuantity()))
-                        .multiply(BigDecimal.valueOf(invoiceProduct.getTax()))
-                        .divide(BigDecimal.valueOf(100))
-                        .intValue())
-                .sum();
+                        .multiply(invoiceProduct.getTax())
+                        .divide(BigDecimal.valueOf(100)))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
-        BigDecimal totalPriceWithTax = totalPriceWithoutTax.add(BigDecimal.valueOf(totalTax));
+        String formattedTotalTax = decimalFormat.format(totalTax);
+        BigDecimal totalPriceWithTax = totalPriceWithoutTax.add(totalTax);
+        BigDecimal taxValue = new BigDecimal(formattedTotalTax);
 
         invoiceDto.setPrice(totalPriceWithoutTax);
-        invoiceDto.setTax(totalTax);
+        invoiceDto.setTax(taxValue);
         invoiceDto.setTotal(totalPriceWithTax);
 
         return invoiceDto;

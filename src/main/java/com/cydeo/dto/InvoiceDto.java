@@ -25,6 +25,6 @@ public class InvoiceDto {
     @NotNull(message = "Vendor is required field")
     private ClientVendorDto clientVendor;
     private BigDecimal price;
-    private Integer tax;
+    private BigDecimal tax;
     private BigDecimal total;
 }
