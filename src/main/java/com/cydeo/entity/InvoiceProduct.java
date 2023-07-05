@@ -23,7 +23,7 @@ public class InvoiceProduct extends BaseEntity {
     private BigDecimal profitLoss;
     private int remainingQuantity;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST},fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     private Invoice invoice;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -3,9 +3,7 @@ package com.cydeo.dto;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Getter
@@ -25,7 +23,7 @@ public class InvoiceProductDto {
     private BigDecimal price;
 
     @NotNull(message = "Tax is required a field.")
-    @Range(max = 20, min = 0,  message = "Tax should be between 0% and 20%")
+    @Range(max = 20, min = 0, message = "Tax should be between 0% and 20%")
     private BigDecimal tax;
     private BigDecimal total;
     private BigDecimal profitLoss;
