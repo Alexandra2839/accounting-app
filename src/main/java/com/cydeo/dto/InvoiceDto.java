@@ -22,7 +22,7 @@ public class InvoiceDto {
     private LocalDate date;
 
     private CompanyDto company;
-    @NotNull(message = "Vendor is required field")
+    @NotNull(message = "This is required field")
     private ClientVendorDto clientVendor;
     private BigDecimal price;
     private BigDecimal tax;

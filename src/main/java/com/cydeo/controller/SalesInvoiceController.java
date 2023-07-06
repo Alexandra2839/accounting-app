@@ -33,24 +33,16 @@ public class SalesInvoiceController {
 
     @GetMapping("/create")
     public String createSalesInvoice(Model model) {
-
-
         model.addAttribute("newSalesInvoice", invoiceService.createNewSalesInvoice());
-        model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
-        model.addAttribute("products", productService.listAllProducts());
-
         return "/invoice/sales-invoice-create";
     }
 
     @PostMapping("/create")
     public String saveSalesInvoice(@ModelAttribute("newSalesInvoice") @Valid InvoiceDto invoiceDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
             return "/invoice/sales-invoice-create";
         }
-        model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
         InvoiceDto obj1 = invoiceService.saveSalesInvoice(invoiceDto);
-
         return "redirect:/salesInvoices/update/" + obj1.getId();
     }
 
@@ -58,20 +50,13 @@ public class SalesInvoiceController {
     private String editInvoice(@PathVariable Long id, Model model) {
         model.addAttribute("invoice", invoiceService.findById(id));
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
-        model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
-        model.addAttribute("products", productService.listAllProducts());
         model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(id));
-
         return "/invoice/sales-invoice-update";
     }
 
     @PostMapping("/update/{invoiceId}")
     private String updateInvoice(@ModelAttribute("newSalesInvoice") @Valid InvoiceDto invoiceDto, @PathVariable Long invoiceId, Model model) {
-
-        model.addAttribute("invoice", invoiceService.findById(invoiceId));
-        model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
-        model.addAttribute("products", productService.listAllProducts());
         model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(invoiceId));
         InvoiceDto obj1 = invoiceService.update(invoiceDto, invoiceId);
         return "redirect:/salesInvoices/update/" + obj1.getId();
@@ -84,14 +69,12 @@ public class SalesInvoiceController {
         if (bindingResult.hasErrors() || stockNotEnough) {
             model.addAttribute("invoice", invoiceService.findById(invoiceId));
             model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(invoiceId));
-            if (stockNotEnough) {
+            if (invoiceProductDto.getProduct() != null && stockNotEnough) {
                 model.addAttribute("error", "Not enough " + invoiceProductDto.getProduct().getName() + " quantity to sell.");
             }
             return "/invoice/sales-invoice-update";
         }
-
         invoiceProductService.save(invoiceProductDto, invoiceId);
-
         return "redirect:/salesInvoices/update/" + invoiceId;
     }
 
@@ -125,12 +108,14 @@ public class SalesInvoiceController {
         model.addAttribute("invoice", invoiceService.getInvoiceForPrint(id));
         return "invoice/invoice_print";
     }
+
     @ModelAttribute
     public void commonModel(Model model){
         model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
         model.addAttribute("invoices",invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.SALES));
         model.addAttribute("products", productService.listAllProducts());
         model.addAttribute("company", invoiceService.getCurrentCompany());
+        model.addAttribute("title", "Cydeo Accounting-Sale Invoice");
     }
 }
 

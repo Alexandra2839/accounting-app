@@ -6,7 +6,6 @@ import com.cydeo.entity.Invoice;
 import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceProductRepository;
-import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.InvoiceProductService;
 import com.cydeo.service.InvoiceService;
 import org.springframework.context.annotation.Lazy;
@@ -24,7 +23,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     private final InvoiceService invoiceService;
     private final MapperUtil mapperUtil;
 
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository,@Lazy InvoiceService invoiceService, MapperUtil mapperUtil) {
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, @Lazy InvoiceService invoiceService, MapperUtil mapperUtil) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.invoiceService = invoiceService;
         this.mapperUtil = mapperUtil;
@@ -75,9 +74,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     private InvoiceProductDto calculateTotalPrice(InvoiceProduct invoiceProduct) {
-        /**
-         * this method calculate Total price of Invoice Product inside the invoice
-         */
 
         InvoiceProductDto invoiceProductDTO = mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
 
@@ -96,11 +92,8 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     @Override
     public boolean isStockNotEnough(InvoiceProductDto invoiceProductDTO) {
-        /**
-         * Check if we have enough products to sell
-         */
-        if(invoiceProductDTO.getQuantity()==null|| invoiceProductDTO.getProduct().getQuantityInStock()==null)
-            return false;
+        if (invoiceProductDTO.getQuantity() == null || invoiceProductDTO.getProduct().getQuantityInStock() == null)
+            return true;
         return invoiceProductDTO.getQuantity() > invoiceProductDTO.getProduct().getQuantityInStock();
     }
 }
