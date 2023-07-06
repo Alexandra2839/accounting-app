@@ -115,7 +115,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
             monthlyProfitLoss.put(invoiceProduct.getInvoice().getDate().getMonth().toString(), null);
         }
 
-        HashSet<String> months = (HashSet<String>) listMonthlyProfitLoss().keySet();
+        Set<String> months = monthlyProfitLoss.keySet();
         int i = 0;
 
         for (String month : months) {
