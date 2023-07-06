@@ -45,10 +45,7 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isAccountNonLocked() {
 
-        if (user.getCompany().getCompanyStatus().equals(CompanyStatus.ACTIVE)){
-            return true;
-        }
-        else return false;
+        return user.getCompany().getCompanyStatus().equals(CompanyStatus.ACTIVE);
 
     }
 

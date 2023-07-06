@@ -34,18 +34,14 @@ public class CategoryController {
     public String createCategory(@Valid @ModelAttribute("newCategory") CategoryDto categoryDto,
                                  BindingResult bindingResult, Model model) {
 
-        if (categoryService.isDescriptionExist(categoryDto)){
-            bindingResult.rejectValue("description"," ","This description is already exists.");
+        if (categoryService.isDescriptionExist(categoryDto)) {
+            bindingResult.rejectValue("description", " ", "This description is already exists.");
         }
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
 
             return "category/category-create";
         }
-
-
-
-
 
 
         categoryService.save(categoryDto);
@@ -59,14 +55,14 @@ public class CategoryController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateCategory( @PathVariable Long id,@Valid @ModelAttribute("category") CategoryDto categoryDto
+    public String updateCategory(@PathVariable Long id, @Valid @ModelAttribute("category") CategoryDto categoryDto
             , BindingResult bindingResult, Model model) {
 
-        if (categoryService.isDescriptionExist(categoryDto)){
-            bindingResult.rejectValue("description"," ","This description is already exists.");
+        if (categoryService.isDescriptionExist(categoryDto)) {
+            bindingResult.rejectValue("description", " ", "This description is already exists.");
         }
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             model.addAttribute("category", categoryDto);
             return "category/category-update";
         }

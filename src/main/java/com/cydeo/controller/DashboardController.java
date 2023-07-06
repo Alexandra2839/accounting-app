@@ -1,8 +1,6 @@
 package com.cydeo.controller;
 
-import com.cydeo.dto.CurrencyDto;
 import com.cydeo.service.DashboardService;
-import com.cydeo.dto.InvoiceDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +20,7 @@ public class DashboardController {
     }
 
     @GetMapping
-    public String getDash(Model model){
+    public String getDash(Model model) {
 
         Map<String, BigDecimal> summaryNumbers = Map.of(
                 "totalCost", dashboardService.calculateTotalCost(),

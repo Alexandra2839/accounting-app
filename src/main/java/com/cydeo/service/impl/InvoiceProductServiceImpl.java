@@ -74,6 +74,21 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
                 .collect(Collectors.toList());
     }
 
+    private InvoiceProductDto calculateTotalPrice(InvoiceProduct invoiceProduct) {
+
+        InvoiceProductDto invoiceProductDTO = mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
+
+        BigDecimal quantity = new BigDecimal(invoiceProductDTO.getQuantity());
+        BigDecimal tax = new BigDecimal(invoiceProductDTO.getTax());
+        BigDecimal totalAmountWithoutTax = invoiceProductDTO.getPrice().multiply(quantity);
+        BigDecimal totalAmountWithTax = totalAmountWithoutTax.add(totalAmountWithoutTax.multiply(tax).divide(new BigDecimal(100)));
+
+        invoiceProductDTO.setTotal(totalAmountWithTax);
+
+        return invoiceProductDTO;
+    }
+    @Override
+    public boolean isStockNotEnough(InvoiceProductDto invoiceProductDTO)
     @Override
     public Map<String, BigDecimal> listMonthlyProfitLoss() {
 
@@ -104,17 +119,4 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         return monthlyProfitLoss;
     }
 
-    private InvoiceProductDto calculateTotalPrice(InvoiceProduct invoiceProduct) {
-
-        InvoiceProductDto invoiceProductDTO = mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
-
-        BigDecimal quantity = new BigDecimal(invoiceProductDTO.getQuantity());
-        BigDecimal tax = new BigDecimal(invoiceProductDTO.getTax());
-        BigDecimal totalAmountWithoutTax = invoiceProductDTO.getPrice().multiply(quantity);
-        BigDecimal totalAmountWithTax = totalAmountWithoutTax.add(totalAmountWithoutTax.multiply(tax).divide(new BigDecimal(100)));
-
-        invoiceProductDTO.setTotal(totalAmountWithTax);
-
-        return invoiceProductDTO;
-    }
 }
