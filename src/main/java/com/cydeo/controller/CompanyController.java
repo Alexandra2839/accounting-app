@@ -72,11 +72,11 @@ public class CompanyController {
     @PostMapping("/create")
     public String saveCompany(@ModelAttribute("newCompany") @Valid CompanyDto companyDto, BindingResult bindingResult) {
 
-        if(companyService.isTitleExist(companyDto)){
+        if (companyService.isTitleExist(companyDto)) {
             bindingResult.rejectValue("title", " ", "This title already exists");
         }
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
 
             return "/company/company-create";
 

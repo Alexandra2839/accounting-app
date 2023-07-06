@@ -78,7 +78,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public List<InvoiceDto> list3LastApprovedInvoices() {
         return invoiceRepository.findTop3ByCompanyTitleAndInvoiceStatusOrderByDateDesc(
-                securityService.getLoggedInUser().getCompany().getTitle(),InvoiceStatus.APPROVED)
+                        securityService.getLoggedInUser().getCompany().getTitle(), InvoiceStatus.APPROVED)
                 .stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto()))
                 .map(invoiceDto -> invoiceService.calculateInvoiceSummary(invoiceDto))
                 .collect(Collectors.toList());
