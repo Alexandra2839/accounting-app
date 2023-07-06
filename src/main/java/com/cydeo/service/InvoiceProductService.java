@@ -15,4 +15,6 @@ public interface InvoiceProductService {
     InvoiceProductDto deleteInvoiceProduct(Long invoiceId, Long productId);
     boolean isStockNotEnough(InvoiceProductDto invoiceProductDTO);
     Map<String, BigDecimal> listMonthlyProfitLoss();
+
+    BigDecimal calculateTotalProfitLoss();
 }

@@ -4,6 +4,7 @@ import com.cydeo.dto.CompanyDto;
 import com.cydeo.dto.InvoiceDto;
 import com.cydeo.enums.InvoiceType;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface InvoiceService {
@@ -36,5 +37,11 @@ public interface InvoiceService {
 
     InvoiceDto getInvoiceForPrint(Long id);
     CompanyDto getCurrentCompany();
+
+    BigDecimal calculateTotalCost();
+
+    BigDecimal calculateTotalSales();
+
+    List<InvoiceDto> list3LastApprovedInvoices();
 
 }

@@ -8,13 +8,5 @@ import java.util.List;
 
 public interface DashboardService {
 
-    BigDecimal calculateTotalProfitLoss();
-
-    BigDecimal calculateTotalCost();
-
-    BigDecimal calculateTotalSales();
-
-    List<InvoiceDto> list3LastApprovedInvoices();
-
     CurrencyDto getRates();
 }

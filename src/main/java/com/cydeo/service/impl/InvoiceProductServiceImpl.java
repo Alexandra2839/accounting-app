@@ -102,6 +102,18 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
+    public BigDecimal calculateTotalProfitLoss() {
+
+        List<InvoiceProduct> list = invoiceProductRepository.findAllByInvoiceInvoiceStatusAndInvoiceInvoiceTypeAndInvoiceCompanyTitle(
+                InvoiceStatus.APPROVED, InvoiceType.SALES, securityService.getLoggedInUser().getCompany().getTitle());
+
+        List<BigDecimal> sum = new ArrayList<>();
+        list.forEach(invoiceProductDto -> sum.add(invoiceProductDto.getProfitLoss()));
+
+        return sum.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
     public Map<String, BigDecimal> listMonthlyProfitLoss() {
 
         Map<String, BigDecimal> monthlyProfitLoss = new HashMap<>();
