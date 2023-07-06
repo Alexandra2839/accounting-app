@@ -9,11 +9,11 @@ import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceProductRepository;
 import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.InvoiceProductService;
+import com.cydeo.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,10 +22,13 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     private final InvoiceRepository invoiceRepository;
     private final MapperUtil mapperUtil;
 
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, InvoiceRepository invoiceRepository, MapperUtil mapperUtil) {
+    private final SecurityService securityService;
+
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
+        this.securityService = securityService;
     }
 
     @Override
@@ -69,6 +72,36 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
                 .stream()
                 .map(this::calculateTotalPrice)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, BigDecimal> listMonthlyProfitLoss() {
+
+        Map<String, BigDecimal> monthlyProfitLoss = new HashMap<>();
+
+        List<InvoiceProduct> list2 = invoiceProductRepository
+                .findAllByInvoiceInvoiceStatusAndInvoiceInvoiceTypeAndInvoiceCompanyTitle(InvoiceStatus.APPROVED, InvoiceType.SALES, securityService.getLoggedInUser().getCompany().getTitle());
+
+        if (list2.size() == 0) return new HashMap<String, BigDecimal>();
+
+        for (InvoiceProduct invoiceProduct : list2) {
+            monthlyProfitLoss.put(invoiceProduct.getInvoice().getDate().getMonth().toString(), null);
+        }
+
+        HashSet<String> months = (HashSet<String>) listMonthlyProfitLoss().keySet();
+        int i = 0;
+
+        for (String month : months) {
+            List<BigDecimal> sum2 = new ArrayList<>();
+
+            list2.stream().filter(list -> list.getInvoice().getDate().getMonth().toString().equals(month))
+                    .forEach(invoiceProductDto -> sum2.add(invoiceProductDto.getProfitLoss()));
+
+            monthlyProfitLoss.put(list2.get(i).getInvoice().getDate().getMonth().toString(), sum2.stream().reduce(BigDecimal.ZERO, BigDecimal::add));
+            i++;
+        }
+
+        return monthlyProfitLoss;
     }
 
     private InvoiceProductDto calculateTotalPrice(InvoiceProduct invoiceProduct) {
