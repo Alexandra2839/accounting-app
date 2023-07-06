@@ -4,14 +4,12 @@ import com.cydeo.dto.CompanyDto;
 import com.cydeo.dto.InvoiceDto;
 import com.cydeo.dto.InvoiceProductDto;
 import com.cydeo.dto.ProductDto;
-import com.cydeo.entity.Company;
 import com.cydeo.entity.Invoice;
 import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.entity.Product;
 import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
 import com.cydeo.mapper.MapperUtil;
-import com.cydeo.repository.InvoiceProductRepository;
 import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.*;
 import org.springframework.stereotype.Service;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -30,13 +29,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final MapperUtil mapperUtil;
     private final CompanyService companyService;
     private final ProductService productService;
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceProductService invoiceProductService, MapperUtil mapperUtil, CompanyService companyService, ProductService productService) {
+
+    private final SecurityService securityService;
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceProductService invoiceProductService, MapperUtil mapperUtil, CompanyService companyService, ProductService productService, SecurityService securityService) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceProductService = invoiceProductService;
         this.mapperUtil = mapperUtil;
         this.companyService = companyService;
         this.productService = productService;
 
+        this.securityService = securityService;
     }
 
     @Override
@@ -230,5 +232,49 @@ public class InvoiceServiceImpl implements InvoiceService {
          */
         CompanyDto company = companyService.getCompanyDtoByLoggedInUser();
         return company;
+    }
+
+
+    @Override
+    public BigDecimal calculateTotalCost() {
+
+        List<InvoiceDto> list = invoiceRepository.findAllByInvoiceTypeAndInvoiceStatusAndCompanyTitle(
+                        InvoiceType.PURCHASE, InvoiceStatus.APPROVED, securityService.getLoggedInUser().getCompany().getTitle())
+                .stream()
+                .map(invoice -> mapperUtil.convert(invoice, new InvoiceDto()))
+                .map(invoiceDto -> calculateInvoiceSummary(invoiceDto))
+                .collect(Collectors.toList());
+
+        List<BigDecimal> sum = new ArrayList<>();
+        list.forEach(invoiceDto -> sum.add(invoiceDto.getTotal()));
+
+
+        return sum.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
+
+    @Override
+    public BigDecimal calculateTotalSales() {
+        List<InvoiceDto> list = invoiceRepository.findAllByInvoiceTypeAndInvoiceStatusAndCompanyTitle(
+                        InvoiceType.SALES, InvoiceStatus.APPROVED, securityService.getLoggedInUser().getCompany().getTitle())
+                .stream()
+                .map(invoice -> mapperUtil.convert(invoice, new InvoiceDto()))
+                .map(invoiceDto -> calculateInvoiceSummary(invoiceDto))
+                .collect(Collectors.toList());
+
+        List<BigDecimal> sum = new ArrayList<>();
+        list.forEach(invoiceDto -> sum.add(invoiceDto.getTotal()));
+
+
+        return sum.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public List<InvoiceDto> list3LastApprovedInvoices() {
+        return invoiceRepository.findTop3ByCompanyTitleAndInvoiceStatusOrderByDateDesc(
+                        securityService.getLoggedInUser().getCompany().getTitle(), InvoiceStatus.APPROVED)
+                .stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto()))
+                .map(invoiceDto -> calculateInvoiceSummary(invoiceDto))
+                .collect(Collectors.toList());
     }
 }
