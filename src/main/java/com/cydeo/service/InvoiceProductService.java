@@ -2,7 +2,9 @@ package com.cydeo.service;
 
 import com.cydeo.dto.InvoiceProductDto;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface InvoiceProductService {
     InvoiceProductDto findById(Long id);
@@ -14,4 +16,7 @@ public interface InvoiceProductService {
 
     List<InvoiceProductDto> listAllByDate();
     boolean isStockNotEnough(InvoiceProductDto invoiceProductDTO);
+    Map<String, BigDecimal> listMonthlyProfitLoss();
+
+    BigDecimal calculateTotalProfitLoss();
 }
