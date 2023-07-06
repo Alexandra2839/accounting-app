@@ -130,14 +130,18 @@ public class PurchasesInvoiceController {
 
     @GetMapping("print/{id}")
     public String printPurchasedInvoice(@PathVariable Long id, Model model) {
-
-        model.addAttribute("company", companyService.getCompanyDtoByLoggedInUser());
-        model.addAttribute("client", clientVendorService.findById(invoiceService.findById(id).getId()));
-        model.addAttribute("invoice", invoiceService.findById(id));
+        model.addAttribute("invoice", invoiceService.getInvoiceForPrint(id));
         model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(id));
-        model.addAttribute("invoice", invoiceService.calculateInvoiceSummary(invoiceService.findById(id)));
 
         return "invoice/invoice_print";
+    }
+    @ModelAttribute
+    public void commonModel(Model model){
+
+        model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.VENDOR));
+        model.addAttribute("invoices",invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.PURCHASE));
+        model.addAttribute("products", productService.listAllProducts());
+        model.addAttribute("company", invoiceService.getCurrentCompany());
     }
 
 

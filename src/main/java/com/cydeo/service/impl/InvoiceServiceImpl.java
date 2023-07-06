@@ -1,7 +1,10 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.dto.CompanyDto;
 import com.cydeo.dto.InvoiceDto;
+import com.cydeo.dto.InvoiceProductDto;
 import com.cydeo.dto.ProductDto;
+import com.cydeo.entity.Company;
 import com.cydeo.entity.Invoice;
 import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.entity.Product;
@@ -10,9 +13,7 @@ import com.cydeo.enums.InvoiceType;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceProductRepository;
 import com.cydeo.repository.InvoiceRepository;
-import com.cydeo.service.CompanyService;
-import com.cydeo.service.InvoiceService;
-import com.cydeo.service.ProductService;
+import com.cydeo.service.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,17 +26,19 @@ import java.util.stream.Collectors;
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
+    private final InvoiceProductService invoiceProductService;
     private final MapperUtil mapperUtil;
     private final InvoiceProductRepository invoiceProductRepository;
     private final CompanyService companyService;
     private final ProductService productService;
-
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, InvoiceProductRepository invoiceProductRepository, CompanyService companyService, ProductService productService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceProductService invoiceProductService, MapperUtil mapperUtil, InvoiceProductRepository invoiceProductRepository, CompanyService companyService, ProductService productService) {
         this.invoiceRepository = invoiceRepository;
+        this.invoiceProductService = invoiceProductService;
         this.mapperUtil = mapperUtil;
         this.invoiceProductRepository = invoiceProductRepository;
         this.companyService = companyService;
         this.productService = productService;
+
     }
 
     @Override
@@ -174,8 +177,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
+
     public InvoiceDto calculateInvoiceSummary(InvoiceDto invoiceDto) {
-        List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findByInvoiceId(invoiceDto.getId());
+        /**
+         * Looking InvoiceDto by ID
+         * and do math operating for Price Wit Out Tax, Tax and Total Price With Taxed
+         */
+        InvoiceDto invoiceDto1 = findById(invoiceDto.getId());
+        List<InvoiceProductDto> invoiceProducts = invoiceProductService.findByInvoiceId(invoiceDto1.getId());
 
         BigDecimal totalPriceWithoutTax = invoiceProducts.stream()
                 .map(invoiceProduct -> invoiceProduct.getPrice().multiply(BigDecimal.valueOf(invoiceProduct.getQuantity())))
@@ -191,12 +200,34 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         String formattedTotalTax = decimalFormat.format(totalTax);
         BigDecimal totalPriceWithTax = totalPriceWithoutTax.add(totalTax);
+        String formattedTotal = decimalFormat.format(totalPriceWithTax);
+
         BigDecimal taxValue = new BigDecimal(formattedTotalTax);
+        BigDecimal totalValue = new BigDecimal(formattedTotal);
 
-        invoiceDto.setPrice(totalPriceWithoutTax);
-        invoiceDto.setTax(taxValue);
-        invoiceDto.setTotal(totalPriceWithTax);
+        invoiceDto1.setPrice(totalPriceWithoutTax);
+        invoiceDto1.setTax(taxValue);
+        invoiceDto1.setTotal(totalValue);
 
-        return invoiceDto;
+        return invoiceDto1;
+    }
+
+    @Override
+    public InvoiceDto getInvoiceForPrint(Long id) {
+        InvoiceDto invoiceDto = findById(id);
+        /**
+         * this method preparing my InvoiceDto for printing
+         */
+
+        InvoiceDto invoiceDto1 = calculateInvoiceSummary(invoiceDto);
+        return invoiceDto1;
+    }
+
+    public CompanyDto getCurrentCompany() {
+        /**
+         * This method I use to send current company information to my controller
+         */
+        CompanyDto company = companyService.getCompanyDtoByLoggedInUser();
+        return company;
     }
 }
