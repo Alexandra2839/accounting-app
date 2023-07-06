@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     private Optional<DefaultExceptionMessageDto> getMessageFromAnnotation(Method method) {
         AccountingExceptionMessage defaultExceptionMessage = method
                 .getAnnotation(AccountingExceptionMessage.class);
-        if (!defaultExceptionMessage.defaultMessage().equals("Something went wrong!")) {
+        if (defaultExceptionMessage != null && !defaultExceptionMessage.defaultMessage().equals("Something went wrong!")) {
             DefaultExceptionMessageDto defaultExceptionMessageDto = DefaultExceptionMessageDto
                     .builder()
                     .message(defaultExceptionMessage.defaultMessage())
