@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -74,6 +75,9 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     private InvoiceProductDto calculateTotalPrice(InvoiceProduct invoiceProduct) {
+        /**
+         * this method calculate Total price of Invoice Product inside the invoice
+         */
 
         InvoiceProductDto invoiceProductDTO = mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
 
@@ -81,8 +85,11 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         BigDecimal tax = invoiceProductDTO.getTax();
         BigDecimal totalAmountWithoutTax = invoiceProductDTO.getPrice().multiply(quantity);
         BigDecimal totalAmountWithTax = totalAmountWithoutTax.add(totalAmountWithoutTax.multiply(tax).divide(new BigDecimal(100)));
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        String formattedTotalAmountWithTax = decimalFormat.format(totalAmountWithTax);
+        BigDecimal totalAmountWithTaxValue = new BigDecimal(formattedTotalAmountWithTax);
 
-        invoiceProductDTO.setTotal(totalAmountWithTax);
+        invoiceProductDTO.setTotal(totalAmountWithTaxValue);
 
         return invoiceProductDTO;
     }
