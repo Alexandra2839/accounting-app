@@ -80,11 +80,13 @@ public class SalesInvoiceController {
     @PostMapping("/addInvoiceProduct/{invoiceId}")
     public String saveProduct(@Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProductDto, BindingResult bindingResult, @PathVariable Long invoiceId, Model model) {
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("invoice", invoiceService.findById(invoiceId));//invoice 14
-            model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
-            model.addAttribute("products", productService.listAllProducts());
-            model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(invoiceId)); //all products from invoice 14
+        boolean stockNotEnough = invoiceProductService.isStockNotEnough(invoiceProductDto);
+        if (bindingResult.hasErrors() || stockNotEnough) {
+            model.addAttribute("invoice", invoiceService.findById(invoiceId));
+            model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(invoiceId));
+            if (stockNotEnough) {
+                model.addAttribute("error", "Not enough " + invoiceProductDto.getProduct().getName() + " quantity to sell.");
+            }
             return "/invoice/sales-invoice-update";
         }
 

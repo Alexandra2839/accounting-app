@@ -82,4 +82,14 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
         return invoiceProductDTO;
     }
+
+    @Override
+    public boolean isStockNotEnough(InvoiceProductDto invoiceProductDTO) {
+        /**
+         * Check if we have enough products to sell
+         */
+        if(invoiceProductDTO.getQuantity()==null|| invoiceProductDTO.getProduct().getQuantityInStock()==null)
+            return false;
+        return invoiceProductDTO.getQuantity() > invoiceProductDTO.getProduct().getQuantityInStock();
+    }
 }
