@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +30,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     @Override
     public ClientVendorDto findById(Long id) {
         ClientVendor clientVendor = clientVendorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded"));
+                .orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded " + id));
         return mapperUtil.convert(clientVendor, new ClientVendorDto());
     }
 

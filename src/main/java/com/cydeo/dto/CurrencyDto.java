@@ -1,21 +1,16 @@
-
 package com.cydeo.dto;
 
+import com.fasterxml.jackson.annotation.*;
+
+import javax.annotation.Generated;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "date",
-    "usd"
+        "date",
+        "usd"
 })
 @Generated("jsonschema2pojo")
 public class CurrencyDto {
@@ -57,21 +52,23 @@ public class CurrencyDto {
         this.additionalProperties.put(name, value);
     }
 
-    public BigDecimal getEuro(){
+    public BigDecimal getEuro() {
         return usd.get("eur");
     }
 
-    public BigDecimal getBritishPound(){
+    public BigDecimal getBritishPound() {
         return usd.get("gbp");
     }
 
-    public BigDecimal getCanadianDollar(){
+    public BigDecimal getCanadianDollar() {
         return usd.get("cad");
     }
-    public BigDecimal getJapaneseYen(){
+
+    public BigDecimal getJapaneseYen() {
         return usd.get("jpy");
     }
-    public BigDecimal getIndianRupee(){
+
+    public BigDecimal getIndianRupee() {
         return usd.get("inr");
     }
 }
