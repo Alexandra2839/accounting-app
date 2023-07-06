@@ -28,14 +28,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final InvoiceProductService invoiceProductService;
     private final MapperUtil mapperUtil;
-    private final InvoiceProductRepository invoiceProductRepository;
     private final CompanyService companyService;
     private final ProductService productService;
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceProductService invoiceProductService, MapperUtil mapperUtil, InvoiceProductRepository invoiceProductRepository, CompanyService companyService, ProductService productService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceProductService invoiceProductService, MapperUtil mapperUtil, CompanyService companyService, ProductService productService) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceProductService = invoiceProductService;
         this.mapperUtil = mapperUtil;
-        this.invoiceProductRepository = invoiceProductRepository;
         this.companyService = companyService;
         this.productService = productService;
 
@@ -117,7 +115,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceDto approvePurchaseInvoice(Long id) {
         Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such element in the system"));
 
-        List<InvoiceProduct> listOfInvoiceProductByInvoiceId = invoiceProductRepository.findByInvoiceId(id);
+        List<InvoiceProductDto> listOfInvoiceProductDtoByInvoiceId = invoiceProductService.findByInvoiceId(id);
+        List<InvoiceProduct> listOfInvoiceProductByInvoiceId = listOfInvoiceProductDtoByInvoiceId.stream()
+                .map(invoiceProductDto -> mapperUtil.convert(invoiceProductDto, new InvoiceProduct()))
+                .collect(Collectors.toList());
 
         for (InvoiceProduct invoiceProduct : listOfInvoiceProductByInvoiceId) {
 
