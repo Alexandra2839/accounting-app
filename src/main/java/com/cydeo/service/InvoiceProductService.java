@@ -13,6 +13,8 @@ public interface InvoiceProductService {
     InvoiceProductDto save(InvoiceProductDto invoiceProductDto, Long id);
     List<InvoiceProductDto> findByInvoiceId(Long id);
     InvoiceProductDto deleteInvoiceProduct(Long invoiceId, Long productId);
+
+    List<InvoiceProductDto> listAllByDate();
     boolean isStockNotEnough(InvoiceProductDto invoiceProductDTO);
     Map<String, BigDecimal> listMonthlyProfitLoss();
 

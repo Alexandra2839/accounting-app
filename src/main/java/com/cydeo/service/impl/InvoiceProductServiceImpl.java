@@ -70,6 +70,14 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
+    public List<InvoiceProductDto> listAllByDate() {
+
+        List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoice_InvoiceStatusOrderByInvoice_DateDesc(InvoiceStatus.APPROVED);
+        return invoiceProducts.stream().map(ip->mapperUtil.convert(ip, new InvoiceProductDto())).collect(Collectors.toList());
+
+    }
+
+    @Override
     public List<InvoiceProductDto> findByInvoiceId(Long id) {
         return invoiceProductRepository.findByInvoiceId(id)
                 .stream()
