@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AccountingExceptionMessage {
-    String defaultMessage() default "Something went wrong.";
+    String defaultMessage() default "Something went wrong!";
 }

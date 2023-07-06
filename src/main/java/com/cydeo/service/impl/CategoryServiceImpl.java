@@ -8,7 +8,6 @@ import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CategoryRepository;
 import com.cydeo.service.CategoryService;
 import com.cydeo.service.CompanyService;
-import com.cydeo.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -93,8 +92,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         return !Objects.equals(categoryDto.getId(), category.getId());
     }
-
-
 
 
 }

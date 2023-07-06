@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
     public UserDto setOnlyAdmin(UserDto userDto) {
 
         if (userRepository.countByCompanyTitleAndRoleDescription(userDto.getCompany().getTitle(), userDto.getRole().getDescription()) == 1
-        && userDto.getRole().getDescription().equals("Admin")) {
+                && userDto.getRole().getDescription().equals("Admin")) {
             userDto.setOnlyAdmin(true);
             return userDto;
         }

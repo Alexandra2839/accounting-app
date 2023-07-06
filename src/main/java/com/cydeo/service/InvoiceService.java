@@ -1,5 +1,6 @@
 package com.cydeo.service;
 
+import com.cydeo.dto.CompanyDto;
 import com.cydeo.dto.InvoiceDto;
 import com.cydeo.enums.InvoiceType;
 
@@ -22,6 +23,7 @@ public interface InvoiceService {
     InvoiceDto delete(Long id);
 
     InvoiceDto approve(Long id);
+
     InvoiceDto approvePurchaseInvoice(Long id);
 
     InvoiceDto createNewSalesInvoice();
@@ -31,5 +33,8 @@ public interface InvoiceService {
     List<InvoiceDto> calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType type);
 
     InvoiceDto calculateInvoiceSummary(InvoiceDto invoiceDto);
+
+    InvoiceDto getInvoiceForPrint(Long id);
+    CompanyDto getCurrentCompany();
 
 }

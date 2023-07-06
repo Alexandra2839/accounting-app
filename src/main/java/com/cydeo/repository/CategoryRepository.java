@@ -13,5 +13,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("select c from Category c where c.company.id= ?1 order by c.description")
     List<Category> getAllProductsByCompanySorted(Long id);
 
-    Optional<Category> findCategoriesByDescriptionAndCompanyTitle(String description,String title);
+    Optional<Category> findCategoriesByDescriptionAndCompanyTitle(String description, String title);
 }
