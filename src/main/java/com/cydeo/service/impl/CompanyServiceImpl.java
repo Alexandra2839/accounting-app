@@ -3,6 +3,7 @@ package com.cydeo.service.impl;
 import com.cydeo.dto.CompanyDto;
 import com.cydeo.entity.Company;
 import com.cydeo.enums.CompanyStatus;
+import com.cydeo.exception.CompanyNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CompanyRepository;
 import com.cydeo.service.CompanyService;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,7 +28,6 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil, SecurityService securityService) {
         this.companyRepository = companyRepository;
         this.mapperUtil = mapperUtil;
-
         this.securityService = securityService;
     }
 
@@ -37,7 +36,7 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto findById(long id) {
 
         Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Company with id " + id + " does not exist in the system"));
+                .orElseThrow(() -> new CompanyNotFoundException("Company with id " + id + " does not exist in the system"));
         return mapperUtil.convert(company, new CompanyDto());
     }
 
@@ -58,7 +57,7 @@ public class CompanyServiceImpl implements CompanyService {
         if (company.isPresent()) {
             company.get().setCompanyStatus(CompanyStatus.ACTIVE);
             companyRepository.save(company.get());
-        } else throw new NoSuchElementException("Company with id " + id + " does not exist in the system");
+        } else throw new CompanyNotFoundException("Company with id " + id + " does not exist in the system");
 
     }
 
@@ -70,7 +69,7 @@ public class CompanyServiceImpl implements CompanyService {
         if (company.isPresent()) {
             company.get().setCompanyStatus(CompanyStatus.PASSIVE);
             companyRepository.save(company.get());
-        } else throw new NoSuchElementException("Company with id " + id + " does not exist in the system");
+        } else throw new CompanyNotFoundException("Company with id " + id + " does not exist in the system");
 
     }
 
@@ -90,7 +89,8 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDto updateById(Long id, CompanyDto dto) {
 
-        Company company = companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Company cannot be found"));
+        Company company = companyRepository.findById(id).orElseThrow(() ->
+                new CompanyNotFoundException("Company with id " + id + " does not exist in the system"));
         Company convertedCompany = mapperUtil.convert(dto, new Company());
         convertedCompany.setId(company.getId());
         convertedCompany.setCompanyStatus(company.getCompanyStatus());
