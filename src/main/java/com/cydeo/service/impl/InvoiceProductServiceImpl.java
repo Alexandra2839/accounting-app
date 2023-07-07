@@ -2,6 +2,8 @@ package com.cydeo.service.impl;
 
 import com.cydeo.dto.InvoiceDto;
 import com.cydeo.dto.InvoiceProductDto;
+import com.cydeo.dto.UserDto;
+import com.cydeo.entity.Company;
 import com.cydeo.entity.Invoice;
 import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.enums.InvoiceStatus;
@@ -67,6 +69,20 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceProduct.setIsDeleted(true);
         invoiceProductRepository.save(invoiceProduct);
         return mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
+    }
+
+    @Override
+    public List<InvoiceProductDto> listAllByDateAndLoggedInUser() {
+
+        UserDto loggedInUser = securityService.getLoggedInUser();
+
+        Company loggedInUserCompany = mapperUtil.convert(loggedInUser.getCompany(), new Company());
+
+        List<InvoiceProduct> invoiceProducts =
+                invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc
+                        (InvoiceStatus.APPROVED, loggedInUserCompany);
+        return invoiceProducts.stream().map(ip->mapperUtil.convert(ip, new InvoiceProductDto())).collect(Collectors.toList());
+
     }
 
     @Override
