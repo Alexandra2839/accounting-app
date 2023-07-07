@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public UserDto findById(Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User with id " + id + "could not be found"));
+                .orElseThrow(() -> new NoSuchElementException("User with id " + id + " could not be found"));
         return mapperUtil.convert(user, new UserDto());
     }
 
