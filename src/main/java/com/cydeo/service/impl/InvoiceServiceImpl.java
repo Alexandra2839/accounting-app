@@ -9,6 +9,7 @@ import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.entity.Product;
 import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
+import com.cydeo.exception.InvoiceNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.*;
@@ -43,7 +44,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceDto findById(Long id) {
-        Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
+        Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException("No such invoice in the system"));
         return mapperUtil.convert(invoice, new InvoiceDto());
     }
 
@@ -89,7 +90,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceDto delete(Long id) {
-        Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
+        Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException("No such invoice in the system"));
         invoice.setIsDeleted(true);
         invoiceRepository.save(invoice);
         return mapperUtil.convert(invoice, new InvoiceDto());
@@ -98,7 +99,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDto update(InvoiceDto invoiceDto, Long id) {//apple
         Invoice invoiceInDb = invoiceRepository.findById(id)//orange
-                .orElseThrow(() -> new NoSuchElementException("No such invoice in the system"));
+                .orElseThrow(() -> new InvoiceNotFoundException("No such invoice in the system"));
 
 
         Invoice convertedInvoice = mapperUtil.convert(invoiceDto, new Invoice());//apple
@@ -115,7 +116,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceDto approvePurchaseInvoice(Long id) {
-        Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such element in the system"));
+        Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException("No such element in the system"));
 
         List<InvoiceProductDto> listOfInvoiceProductDtoByInvoiceId = invoiceProductService.findByInvoiceId(id);
         List<InvoiceProduct> listOfInvoiceProductByInvoiceId = listOfInvoiceProductDtoByInvoiceId.stream()
@@ -141,7 +142,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     public InvoiceDto approve(Long id) {
-        Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No such element in the system"));
+        Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException("No such element in the system"));
 
         invoiceDB.setInvoiceStatus(InvoiceStatus.APPROVED);
 
