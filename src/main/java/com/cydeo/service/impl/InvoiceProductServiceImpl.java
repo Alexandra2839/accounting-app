@@ -8,6 +8,7 @@ import com.cydeo.entity.Invoice;
 import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
+import com.cydeo.exception.InvoiceProductNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceProductRepository;
 import com.cydeo.service.InvoiceProductService;
@@ -37,7 +38,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     @Override
     public InvoiceProductDto findById(Long id) {
-        InvoiceProduct invoiceProduct = invoiceProductRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
+        InvoiceProduct invoiceProduct = invoiceProductRepository.findById(id).orElseThrow(() -> new InvoiceProductNotFoundException("No such Invoice Product in the system"));
 
         return mapperUtil.convert(invoiceProduct, new InvoiceProductDto());
     }
