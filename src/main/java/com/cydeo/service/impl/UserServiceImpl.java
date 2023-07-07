@@ -2,6 +2,7 @@ package com.cydeo.service.impl;
 
 import com.cydeo.dto.UserDto;
 import com.cydeo.entity.User;
+import com.cydeo.exception.UserNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.UserRepository;
 import com.cydeo.service.SecurityService;
@@ -11,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public UserDto findById(Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User with id " + id + " could not be found"));
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " could not be found"));
         return mapperUtil.convert(user, new UserDto());
     }
 
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
         User user1 = userRepository.findByUsername(user.getUsername());
 
-        User convertedUser = mapperUtil.convert(user, new User());   // has id?
+        User convertedUser = mapperUtil.convert(user, new User());
 
         convertedUser.setId(user1.getId());
 
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User with id " + id + " could not be found"));
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " could not be found"));
 
         user.setIsDeleted(true);
         user.setUsername(user.getUsername() + "-" + user.getId());
