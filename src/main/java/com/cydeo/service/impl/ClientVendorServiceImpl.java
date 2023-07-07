@@ -4,6 +4,7 @@ import com.cydeo.dto.ClientVendorDto;
 import com.cydeo.entity.ClientVendor;
 import com.cydeo.entity.Company;
 import com.cydeo.enums.ClientVendorType;
+import com.cydeo.exception.ClientVendorNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.ClientVendorRepository;
 import com.cydeo.service.ClientVendorService;
@@ -30,7 +31,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     @Override
     public ClientVendorDto findById(Long id) {
         ClientVendor clientVendor = clientVendorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded " + id));
+                .orElseThrow(() -> new ClientVendorNotFoundException("No Client or Vendor founded " + id));
         return mapperUtil.convert(clientVendor, new ClientVendorDto());
     }
 
@@ -66,7 +67,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     @Override
     public ClientVendorDto update(ClientVendorDto clientVendorDto) {
         ClientVendor clientVendorInDB = clientVendorRepository.findById(clientVendorDto.getId())
-                .orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded"));
+                .orElseThrow(() -> new ClientVendorNotFoundException("No Client or Vendor founded"));
         clientVendorDto.getAddress().setId(clientVendorInDB.getAddress().getId());     // otherwise it creates new address instead of updating existing one
         ClientVendor convertedCV = mapperUtil.convert(clientVendorDto, new ClientVendor());
 
@@ -79,7 +80,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     @Override
     public void delete(ClientVendorDto clientVendorDto) {
         ClientVendor clientVendor = clientVendorRepository.findById(clientVendorDto.getId())
-                .orElseThrow(() -> new NoSuchElementException("No Client or Vendor founded"));
+                .orElseThrow(() -> new ClientVendorNotFoundException("No Client or Vendor founded"));
         clientVendor.setIsDeleted(true);
         clientVendor.setClientVendorName(clientVendorDto.getClientVendorName() + " - " + clientVendorDto.getId());
         clientVendorRepository.save(clientVendor);
