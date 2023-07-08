@@ -47,7 +47,7 @@ public class SalesInvoiceController {
     }
 
     @GetMapping("/update/{id}")
-    private String editInvoice(@PathVariable Long id, Model model) {
+    public String editInvoice(@PathVariable Long id, Model model) {
         model.addAttribute("invoice", invoiceService.findById(id));
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
         model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(id));
@@ -55,7 +55,7 @@ public class SalesInvoiceController {
     }
 
     @PostMapping("/update/{invoiceId}")
-    private String updateInvoice(@ModelAttribute("newSalesInvoice") @Valid InvoiceDto invoiceDto, @PathVariable Long invoiceId, Model model) {
+    public String updateInvoice(@ModelAttribute("newSalesInvoice") @Valid InvoiceDto invoiceDto, @PathVariable Long invoiceId, Model model) {
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
         model.addAttribute("invoiceProducts", invoiceProductService.findByInvoiceId(invoiceId));
         InvoiceDto obj1 = invoiceService.update(invoiceDto, invoiceId);
@@ -98,7 +98,7 @@ public class SalesInvoiceController {
 
     @GetMapping("/approve/{invoiceId}")
     public String approveSalesInvoice(@PathVariable Long invoiceId, Model model) {
-        invoiceService.approve(invoiceId);
+        invoiceService.approveSalesInvoice(invoiceId);
         return "redirect:/salesInvoices/list";
     }
 
@@ -110,9 +110,9 @@ public class SalesInvoiceController {
     }
 
     @ModelAttribute
-    public void commonModel(Model model){
+    public void commonModel(Model model) {
         model.addAttribute("clients", clientVendorService.findAllByType(ClientVendorType.CLIENT));
-        model.addAttribute("invoices",invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.SALES));
+        model.addAttribute("invoices", invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.SALES));
         model.addAttribute("products", productService.listAllProducts());
         model.addAttribute("company", invoiceService.getCurrentCompany());
         model.addAttribute("title", "Cydeo Accounting-Sale Invoice");
