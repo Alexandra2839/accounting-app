@@ -49,7 +49,7 @@ public class PurchasesInvoiceController {
 
 
     @GetMapping("/update/{id}")
-    private String editInvoice(@PathVariable Long id, Model model) {
+    public String editInvoice(@PathVariable Long id, Model model) {
 
         model.addAttribute("invoice", invoiceService.findById(id));
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
@@ -59,7 +59,7 @@ public class PurchasesInvoiceController {
     }
 
     @PostMapping("/update/{invoiceId}")
-    private String updateInvoice(@ModelAttribute("newPurchaseInvoice") @Valid InvoiceDto invoiceDto, @PathVariable Long invoiceId, Model model) {
+    public String updateInvoice(@ModelAttribute("newPurchaseInvoice") @Valid InvoiceDto invoiceDto, @PathVariable Long invoiceId, Model model) {
 
         model.addAttribute("invoice", invoiceService.findById(invoiceId));
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
@@ -119,9 +119,9 @@ public class PurchasesInvoiceController {
     }
 
     @ModelAttribute
-    public void commonModel(Model model){
+    public void commonModel(Model model) {
         model.addAttribute("vendors", clientVendorService.findAllByType(ClientVendorType.VENDOR));
-        model.addAttribute("invoices",invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.PURCHASE));
+        model.addAttribute("invoices", invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.PURCHASE));
         model.addAttribute("products", productService.listAllProducts());
         model.addAttribute("company", invoiceService.getCurrentCompany());
         model.addAttribute("title", "Cydeo Accounting-Purchase Invoice");
