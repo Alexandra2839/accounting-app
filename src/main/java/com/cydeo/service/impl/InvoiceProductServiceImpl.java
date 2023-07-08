@@ -82,7 +82,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         List<InvoiceProduct> invoiceProducts =
                 invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc
                         (InvoiceStatus.APPROVED, loggedInUserCompany);
-        return invoiceProducts.stream().map(ip->mapperUtil.convert(ip, new InvoiceProductDto())).collect(Collectors.toList());
+        return invoiceProducts.stream().map(ip -> mapperUtil.convert(ip, new InvoiceProductDto())).collect(Collectors.toList());
 
     }
 
@@ -131,6 +131,28 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
+    public BigDecimal calculateProfitLossForInvoiceProduct(InvoiceProductDto dto) {
+        List<InvoiceProduct> list = invoiceProductRepository.findAllByProductIdAndInvoiceCompanyTitleAndInvoice_InvoiceTypeAndInvoiceInvoiceStatusOrderByInvoiceDateAsc(
+                dto.getProduct().getId(), dto.getInvoice().getCompany().getTitle(), InvoiceType.PURCHASE, InvoiceStatus.APPROVED);
+        int quantityTemp = dto.getQuantity();
+        BigDecimal profitLoss = new BigDecimal(0);
+        for (int i = 0; i < list.size(); i++) {
+            if (quantityTemp == 0) {
+                break;
+            }
+            if (list.get(i).getQuantity() > quantityTemp) {
+                profitLoss = profitLoss.add(dto.getPrice().subtract(list.get(i).getPrice()).multiply(new BigDecimal(quantityTemp)));
+                break;
+            } else {
+                quantityTemp -= list.get(i).getQuantity();
+                profitLoss = profitLoss.add(dto.getPrice().subtract(list.get(i).getPrice()).multiply(new BigDecimal(list.get(i).getQuantity())));
+            }
+        }
+
+        return profitLoss;
+    }
+
+    @Override
     public Map<String, BigDecimal> listMonthlyProfitLoss() {
 
         Map<String, BigDecimal> monthlyProfitLoss = new HashMap<>();
@@ -159,5 +181,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
         return monthlyProfitLoss;
     }
+
 
 }
