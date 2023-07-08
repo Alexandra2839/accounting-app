@@ -20,7 +20,6 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +31,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductService productService;
 
     private final SecurityService securityService;
+
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceProductService invoiceProductService, MapperUtil mapperUtil, CompanyService companyService, ProductService productService, SecurityService securityService) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceProductService = invoiceProductService;
@@ -65,7 +65,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoiceDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
         Invoice invoice1 = mapperUtil.convert(invoiceDto, new Invoice());
-        invoice1.setId(invoiceDto.getId());
         invoice1.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
         invoice1.setInvoiceType(InvoiceType.PURCHASE);
         invoiceRepository.save(invoice1);
@@ -79,7 +78,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
 
         Invoice invoice1 = mapperUtil.convert(invoiceDto, new Invoice());
-        invoice1.setId(invoiceDto.getId());
+
         invoice1.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
         invoice1.setInvoiceType(InvoiceType.SALES);
         invoiceRepository.save(invoice1);
@@ -141,14 +140,24 @@ public class InvoiceServiceImpl implements InvoiceService {
         return mapperUtil.convert(invoiceDB, new InvoiceDto());
     }
 
-    public InvoiceDto approve(Long id) {
+    public InvoiceDto approveSalesInvoice(Long id) {
         Invoice invoiceDB = invoiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException("No such element in the system"));
 
+
+        invoiceDB.getInvoiceProductList().stream().map(
+                        l -> {
+                            l.getProduct().setQuantityInStock(l.getProduct().getQuantityInStock() - l.getQuantity());
+                            l.setProfitLoss(invoiceProductService.calculateProfitLossForInvoiceProduct(mapperUtil.convert(l, new InvoiceProductDto())));
+                            return l;
+                        })
+                .collect(Collectors.toList());
         invoiceDB.setInvoiceStatus(InvoiceStatus.APPROVED);
+        invoiceDB.setDate(LocalDate.now());
 
         invoiceRepository.save(invoiceDB);
         return mapperUtil.convert(invoiceDB, new InvoiceDto());
     }
+
 
     @Override
     public InvoiceDto createNewSalesInvoice() {
