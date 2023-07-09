@@ -24,5 +24,5 @@ public interface CompanyService {
 
     List<CompanyDto> listAllCompaniesByLoggedInUser();
 
-    List<String> getCountryList();
+
 }
