@@ -23,4 +23,6 @@ public interface CompanyService {
     boolean isTitleExist(CompanyDto companyDto);
 
     List<CompanyDto> listAllCompaniesByLoggedInUser();
+
+    List<String> getCountryList();
 }

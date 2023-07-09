@@ -168,14 +168,18 @@
                                                             <div class="form-group">
                                                                 <div class="controls">
                                                                     <label>Country</label>
-                                                                    <input type="text" th:field="*{address.country}"
-                                                                           placeholder="Country"
-                                                                           class="form-control">
-                                                                    <ul>
+                                                                    <select name="countyName" th:field="*{address.country}" class="custom-select">
+                                                                        <option th:value="''" th:text="Select" selected></option>
+                                                                        <option th:value="USA" th:text="USA"></option>
+                                                                        <option th:each="country:${countries}"
+                                                                                th:value="${country}"
+                                                                                th:text="${country}"></option>
+                                                                        <ul>
                                                                         <li class="validation"
                                                                             th:each="err : ${#fields.errors('address.country')}"
                                                                             th:text="${err}"></li>
-                                                                    </ul>
+                                                                        </ul>
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                         </div>

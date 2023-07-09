@@ -1,5 +1,6 @@
 package com.cydeo.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,6 @@ public class AddressDto {
     private String state;
 
     @NotBlank(message = "Country is a required field.")
-    @Size(max = 50, min = 2, message = "Country should have 2-50 characters long.")
     private String country;
 
     @NotBlank(message = "Zip Code is a required field.")

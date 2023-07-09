@@ -32,6 +32,8 @@ public class CompanyController {
     public String editCompany(@PathVariable("id") Long id, Model model) {
 
         model.addAttribute("company", companyService.findById(id));
+        model.addAttribute("countries", companyService.getCountryList());
+
 
         return "/company/company-update";
 
@@ -39,7 +41,7 @@ public class CompanyController {
 
     @PostMapping("/update/{id}")
     public String saveUpdatedCompany(@ModelAttribute("company") @Valid CompanyDto companyDto, BindingResult bindingResult,
-                                     @PathVariable("id") Long id) {
+                                     @PathVariable("id") Long id, Model model) {
 
 
         if (companyService.isTitleExist(companyDto)) {
@@ -53,6 +55,8 @@ public class CompanyController {
 
         }
 
+        model.addAttribute("countries", companyService.getCountryList());
+
         companyService.updateById(id, companyDto);
 
         return "redirect:/companies/list";
@@ -64,13 +68,14 @@ public class CompanyController {
     public String createCompany(Model model) {
 
         model.addAttribute("newCompany", new CompanyDto());
+        model.addAttribute("countries", companyService.getCountryList());
 
         return "/company/company-create";
 
     }
 
     @PostMapping("/create")
-    public String saveCompany(@ModelAttribute("newCompany") @Valid CompanyDto companyDto, BindingResult bindingResult) {
+    public String saveCompany(@ModelAttribute("newCompany") @Valid CompanyDto companyDto, BindingResult bindingResult, Model model) {
 
         if (companyService.isTitleExist(companyDto)) {
             bindingResult.rejectValue("title", " ", "This title already exists");

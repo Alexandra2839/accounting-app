@@ -1,5 +1,6 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.client.CountryClient;
 import com.cydeo.dto.CompanyDto;
 import com.cydeo.entity.Company;
 import com.cydeo.enums.CompanyStatus;
@@ -11,6 +12,7 @@ import com.cydeo.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,12 +25,16 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final MapperUtil mapperUtil;
     private final SecurityService securityService;
+    private final CountryClient countryClient;
+
+    private String authToken = "4xGQzd5eB_Wa1wUWg4nsiz7I4LBJWtuvdK40lBj0l4agHRXbkYHoDIUQW7hPLP_OPFQ";
 
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil, SecurityService securityService) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil, SecurityService securityService, CountryClient countryClient) {
         this.companyRepository = companyRepository;
         this.mapperUtil = mapperUtil;
         this.securityService = securityService;
+        this.countryClient = countryClient;
     }
 
 
@@ -130,5 +136,17 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         return listAllCompanies();
+    }
+
+    @Override
+    public List<String> getCountryList() {
+
+        List<String> countryNameList = countryClient.getCountryList(authToken).stream()
+                .map(countryDto -> countryDto.getCountryName())
+                .sorted()
+                .collect(Collectors.toList());
+
+        return countryNameList;
+
     }
 }
