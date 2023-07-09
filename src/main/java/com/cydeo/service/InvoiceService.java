@@ -23,7 +23,7 @@ public interface InvoiceService {
 
     InvoiceDto delete(Long id);
 
-    InvoiceDto approve(Long id);
+    InvoiceDto approveSalesInvoice(Long id);
 
     InvoiceDto approvePurchaseInvoice(Long id);
 
@@ -36,6 +36,7 @@ public interface InvoiceService {
     InvoiceDto calculateInvoiceSummary(InvoiceDto invoiceDto);
 
     InvoiceDto getInvoiceForPrint(Long id);
+
     CompanyDto getCurrentCompany();
 
     BigDecimal calculateTotalCost();
