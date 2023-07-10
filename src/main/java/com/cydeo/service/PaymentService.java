@@ -8,4 +8,5 @@ public interface PaymentService {
    void findPaymentsIfNotExist(int year);
    List<PaymentDto> findAllByYear(int year);
    PaymentDto getPaymentById(Long id);
+   PaymentDto update(PaymentDto paymentDto);
 }
