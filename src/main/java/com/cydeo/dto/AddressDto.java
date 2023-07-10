@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -32,7 +33,7 @@ public class AddressDto {
     @Size(max = 50, min = 2, message = "State should have 2-50 characters long.")
     private String state;
 
-    @NotBlank(message = "Country is a required field.")
+    @NotNull(message = "Please select a country")
     private String country;
 
     @NotBlank(message = "Zip Code is a required field.")

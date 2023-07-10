@@ -53,12 +53,10 @@ public class CompanyController {
 
 
         if (bindingResult.hasErrors()) {
-
+            model.addAttribute("countries", addressService.getCountryList());
             return "/company/company-update";
 
         }
-
-        model.addAttribute("countries", addressService.getCountryList());
 
         companyService.updateById(id, companyDto);
 
@@ -85,9 +83,8 @@ public class CompanyController {
         }
 
         if (bindingResult.hasErrors()) {
-
+            model.addAttribute("countries", addressService.getCountryList());
             return "/company/company-create";
-
         }
 
         companyService.save(companyDto);
