@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class InvoiceDto {
 
     private Long id;
