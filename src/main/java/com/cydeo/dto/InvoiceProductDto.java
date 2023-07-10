@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class InvoiceProductDto {
 
     private Long id;
