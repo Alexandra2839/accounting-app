@@ -27,7 +27,7 @@ public class InvoiceProductDto {
     private BigDecimal tax;
     private BigDecimal total;
     private BigDecimal profitLoss;
-    private Integer remainingQty;
+    private Integer remainingQuantity;
     private InvoiceDto invoice;
     @NotNull(message = "Product Unit is a required field.")
     private ProductDto product;

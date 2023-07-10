@@ -56,7 +56,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
 
         InvoiceProduct invoiceProduct = mapperUtil.convert(invoiceProductDto, new InvoiceProduct());
-
+        invoiceProduct.setRemainingQuantity(invoiceProduct.getQuantity());
         invoiceProduct.setInvoice(invoice);
 
         InvoiceProduct savedInvoiceProduct = invoiceProductRepository.save(invoiceProduct);
@@ -82,7 +82,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         List<InvoiceProduct> invoiceProducts =
                 invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc
                         (InvoiceStatus.APPROVED, loggedInUserCompany);
-        return invoiceProducts.stream().map(ip->mapperUtil.convert(ip, new InvoiceProductDto())).collect(Collectors.toList());
+        return invoiceProducts.stream().map(ip -> mapperUtil.convert(ip, new InvoiceProductDto())).collect(Collectors.toList());
 
     }
 
@@ -131,6 +131,35 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
+    public BigDecimal calculateProfitLossForInvoiceProduct(InvoiceProductDto dto) {
+        List<InvoiceProduct> list = invoiceProductRepository.findAllByProductIdAndInvoiceCompanyTitleAndInvoice_InvoiceTypeAndInvoiceInvoiceStatusOrderByInvoiceDateAsc(
+                dto.getProduct().getId(), dto.getInvoice().getCompany().getTitle(), InvoiceType.PURCHASE, InvoiceStatus.APPROVED);
+        int quantityTemp = dto.getQuantity();
+        BigDecimal profitLoss = new BigDecimal(0);
+        for (int i = 0; i < list.size(); i++) {
+            if (quantityTemp == 0) {
+                break;
+            }
+            if (list.get(i).getRemainingQuantity() >= quantityTemp) {
+                BigDecimal dtoTax = dto.getPrice().multiply(dto.getTax()).divide(new BigDecimal(100));
+                BigDecimal listTax = list.get(i).getPrice().multiply(list.get(i).getTax()).divide(new BigDecimal(100));
+                profitLoss = profitLoss.add(dto.getPrice().add(dtoTax).subtract(list.get(i).getPrice().add(listTax)).multiply(new BigDecimal(quantityTemp)));
+                list.get(i).setRemainingQuantity(list.get(i).getRemainingQuantity() - quantityTemp);
+                break;
+            } else {
+                quantityTemp -= list.get(i).getRemainingQuantity();
+                BigDecimal dtoTax = dto.getPrice().multiply(dto.getTax()).divide(new BigDecimal(100));
+                BigDecimal listTax = list.get(i).getPrice().multiply(list.get(i).getTax()).divide(new BigDecimal(100));
+                profitLoss = profitLoss.add(dto.getPrice().add(dtoTax).subtract(list.get(i).getPrice().add(listTax)).multiply(new BigDecimal(list.get(i).getRemainingQuantity())));
+                list.get(i).setRemainingQuantity(0);
+            }
+        }
+
+        return profitLoss;
+    }
+
+
+    @Override
     public Map<String, BigDecimal> listMonthlyProfitLoss() {
 
         Map<String, BigDecimal> monthlyProfitLoss = new HashMap<>();
@@ -159,5 +188,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
         return monthlyProfitLoss;
     }
+
 
 }
