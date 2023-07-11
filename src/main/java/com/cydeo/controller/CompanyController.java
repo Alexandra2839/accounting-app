@@ -1,6 +1,7 @@
 package com.cydeo.controller;
 
 import com.cydeo.dto.CompanyDto;
+import com.cydeo.service.AddressService;
 import com.cydeo.service.CompanyService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +15,11 @@ import javax.validation.Valid;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final AddressService addressService;
 
-    public CompanyController(CompanyService companyService) {
+    public CompanyController(CompanyService companyService, AddressService addressService) {
         this.companyService = companyService;
+        this.addressService = addressService;
     }
 
     @GetMapping("/list")
@@ -32,6 +35,8 @@ public class CompanyController {
     public String editCompany(@PathVariable("id") Long id, Model model) {
 
         model.addAttribute("company", companyService.findById(id));
+        model.addAttribute("countries", addressService.getCountryList());
+
 
         return "/company/company-update";
 
@@ -39,7 +44,7 @@ public class CompanyController {
 
     @PostMapping("/update/{id}")
     public String saveUpdatedCompany(@ModelAttribute("company") @Valid CompanyDto companyDto, BindingResult bindingResult,
-                                     @PathVariable("id") Long id) {
+                                     @PathVariable("id") Long id, Model model) {
 
 
         if (companyService.isTitleExist(companyDto)) {
@@ -48,7 +53,7 @@ public class CompanyController {
 
 
         if (bindingResult.hasErrors()) {
-
+            model.addAttribute("countries", addressService.getCountryList());
             return "/company/company-update";
 
         }
@@ -64,22 +69,22 @@ public class CompanyController {
     public String createCompany(Model model) {
 
         model.addAttribute("newCompany", new CompanyDto());
+        model.addAttribute("countries", addressService.getCountryList());
 
         return "/company/company-create";
 
     }
 
     @PostMapping("/create")
-    public String saveCompany(@ModelAttribute("newCompany") @Valid CompanyDto companyDto, BindingResult bindingResult) {
+    public String saveCompany(@ModelAttribute("newCompany") @Valid CompanyDto companyDto, BindingResult bindingResult, Model model) {
 
         if (companyService.isTitleExist(companyDto)) {
             bindingResult.rejectValue("title", " ", "This title already exists");
         }
 
         if (bindingResult.hasErrors()) {
-
+            model.addAttribute("countries", addressService.getCountryList());
             return "/company/company-create";
-
         }
 
         companyService.save(companyDto);

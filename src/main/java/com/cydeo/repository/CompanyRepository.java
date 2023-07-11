@@ -12,10 +12,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query(value = "SELECT * FROM companies WHERE id != 1 ORDER BY company_status, title ASC", nativeQuery = true)
     List<Company> findAllBesidesId1OrderedByStatusAndTitle();
 
-
     Optional<Company> findByTitle(String title);
 
     List<Company> findAllByTitle(String title);
-
 
 }
