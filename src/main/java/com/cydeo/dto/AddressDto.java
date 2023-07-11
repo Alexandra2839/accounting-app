@@ -33,7 +33,7 @@ public class AddressDto {
     @Size(max = 50, min = 2, message = "State should have 2-50 characters long.")
     private String state;
 
-    @NotNull(message = "Please select a country")
+    @NotBlank(message = "Please select a country")
     private String country;
 
     @NotBlank(message = "Zip Code is a required field.")
