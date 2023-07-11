@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -36,7 +37,6 @@ public class CompanyController {
 
         model.addAttribute("company", companyService.findById(id));
         model.addAttribute("countries", addressService.getCountryList());
-
 
         return "/company/company-update";
 
@@ -76,15 +76,21 @@ public class CompanyController {
     }
 
     @PostMapping("/create")
-    public String saveCompany(@ModelAttribute("newCompany") @Valid CompanyDto companyDto, BindingResult bindingResult, Model model) {
+    public String saveCompany(@ModelAttribute("newCompany") @Valid CompanyDto companyDto, BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes, Model model) {
 
         if (companyService.isTitleExist(companyDto)) {
-            bindingResult.rejectValue("title", " ", "This title already exists");
+            bindingResult.rejectValue("title", " ", "This title already exists.");
         }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("countries", addressService.getCountryList());
             return "/company/company-create";
+        }
+
+        if (companyDto.getAddress().getCountry().isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Please select a country.");
+            return "redirect:/companies/create";
         }
 
         companyService.save(companyDto);
