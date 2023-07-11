@@ -97,5 +97,7 @@ public class ClientVendorController {
     public void commonAttributes(Model model) {
         model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
         model.addAttribute("title", "Cydeo Accounting-Client&Vendor");
+        model.addAttribute("countries", addressService.getCountryList());
+
     }
 }

@@ -2,7 +2,6 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.PaymentDto;
 import com.cydeo.entity.ChargeRequest;
-import com.cydeo.entity.Payment;
 import com.cydeo.service.PaymentService;
 import com.cydeo.service.impl.StripeService;
 import com.stripe.exception.StripeException;
@@ -21,12 +20,10 @@ public class PaymentController {
     private String stripePublicKey;
     private final PaymentService paymentService;
 
-
     public PaymentController(PaymentService paymentService, StripeService stripeService) {
         this.paymentService = paymentService;
 
     }
-
     @GetMapping({"/list","/list/{year}"})
     public String showMonthsList(@RequestParam(value = "year", required = false)String year, Model model){
         int yearForMethods = LocalDate.now().getYear();
@@ -51,7 +48,6 @@ public class PaymentController {
     @PostMapping("/charge/{id}")
     public String charge(@PathVariable("id") Long id, ChargeRequest chargeRequest, Model model)
             throws StripeException {
-
 
         chargeRequest.setDescription("Cydeo accounting subscription fee for : " +
                 paymentService.getPaymentById(id).getMonth() + " " +
@@ -80,9 +76,11 @@ public class PaymentController {
         return "/payment/payment-result";
     }
 
-
-
-
-
+    @GetMapping("toInvoice/{id}")
+    public String printMembershipInvoice(@PathVariable Long id, Model model) {
+        model.addAttribute("company", paymentService.getPaymentById(id).getCompany());
+        model.addAttribute("payment", paymentService.getPaymentById(id));
+        return "/payment/payment-invoice-print";
+    }
 
 }
