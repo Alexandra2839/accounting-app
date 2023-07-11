@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(convertedUser);
 
-        return findByUsername(user.getUsername());
+        return mapperUtil.convert(convertedUser, new UserDto());
 
     }
 
