@@ -2,6 +2,7 @@ package com.cydeo.controller;
 
 import com.cydeo.dto.PaymentDto;
 import com.cydeo.entity.ChargeRequest;
+import com.cydeo.entity.Payment;
 import com.cydeo.service.PaymentService;
 import com.cydeo.service.impl.StripeService;
 import com.stripe.exception.StripeException;
@@ -19,12 +20,11 @@ public class PaymentController {
     @Value("pk_test_51NS6IJHtE959pxoPuS0nkKo8FrBLOef4lcHbTfeeuVPHEWXWY1NZA2wlK2b645z2l18OeS05AHLdgansZKy5tiqa00q7XRhAHd")
     private String stripePublicKey;
     private final PaymentService paymentService;
-    private final StripeService stripeService;
 
 
     public PaymentController(PaymentService paymentService, StripeService stripeService) {
         this.paymentService = paymentService;
-        this.stripeService = stripeService;
+
     }
 
     @GetMapping({"/list","/list/{year}"})
@@ -45,22 +45,31 @@ public class PaymentController {
         model.addAttribute("amount",payment.getAmount() );
         model.addAttribute("stripePublicKey", stripePublicKey);
         model.addAttribute("currency", ChargeRequest.Currency.USD);
+        model.addAttribute("monthId", id);
         return"/payment/payment-method";
     }
-    @PostMapping("/charge")
-    public String charge(ChargeRequest chargeRequest, Model model)
+    @PostMapping("/charge/{id}")
+    public String charge(@PathVariable("id") Long id, ChargeRequest chargeRequest, Model model)
             throws StripeException {
 
 
-        chargeRequest.setDescription("Example charge");
+        chargeRequest.setDescription("Cydeo accounting subscription fee for : " +
+                paymentService.getPaymentById(id).getMonth() + " " +
+                paymentService.getPaymentById(id).getYear());
         chargeRequest.setCurrency(ChargeRequest.Currency.USD);
         chargeRequest.setAmount("250");
-
 
         Charge charge = StripeService.charge(chargeRequest);
 
         model.addAttribute("chargeId", charge.getId());
         model.addAttribute("description", charge.getDescription());
+
+        PaymentDto paidPayment = paymentService.getPaymentById(id);
+        paidPayment.setPaid(true);
+        paidPayment.setCompanyStripedId(charge.getId());
+        paidPayment.setPaymentDate(LocalDate.now());
+
+        paymentService.update(paidPayment);
 
         return "/payment/payment-result";
     }
