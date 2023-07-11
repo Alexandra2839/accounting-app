@@ -58,13 +58,14 @@ class UserServiceImplUnitTest {
 
     }
 
-    @Disabled
     @Test
     public void should_update_user_and_return_updated_user() {
         User user = TestDocumentInitializer.getUserEntity("role");
         UserDto userDto = TestDocumentInitializer.getUser("role");
-
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(mapperUtil.convert(any(UserDto.class), any(User.class))).thenReturn(user);
         when(userRepository.save(user)).thenReturn(user);
+        when(mapperUtil.convert(any(User.class), any(UserDto.class))).thenReturn(userDto);
         userDto.setUsername("JohnSmith@test.com");
         userDto.setFirstname("John");
         UserDto updatedUser = userService.update(userDto);
@@ -102,6 +103,23 @@ class UserServiceImplUnitTest {
 
         assertThat(userList).isNotNull();
         assertThat(userList.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void should_save_user_and_return_saved_user(){
+        User user = TestDocumentInitializer.getUserEntity("Manager");
+        UserDto userDto = TestDocumentInitializer.getUser("Manager");
+
+        when(mapperUtil.convert(any(UserDto.class), any(User.class))).thenReturn(user);
+        when(passwordEncoder.encode(anyString())).thenReturn(user.getPassword());
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(mapperUtil.convert(any(User.class), any(UserDto.class))).thenReturn(userDto);
+
+        UserDto savedUser = userService.save(userDto);
+
+        assertThat(savedUser).isNotNull();
+
+
     }
 
 
