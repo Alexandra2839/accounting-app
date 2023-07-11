@@ -8,6 +8,7 @@ import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.UserRepository;
 import com.cydeo.service.SecurityService;
 import com.cydeo.service.impl.UserServiceImpl;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,7 +42,7 @@ class UserServiceImplUnitTest {
     private UserServiceImpl userService;
 
     @Test
-    public void should_trow_exception_when_user_does_not_exist() {
+    public void should_throw_exception_when_user_does_not_exist() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
         Throwable throwable = catchThrowable(() -> userService.findById(1L));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
@@ -137,6 +138,27 @@ class UserServiceImplUnitTest {
         when(userRepository.findByUsername(userDto.getUsername())).thenReturn(user);
 
         assertThat(userService.isEmailExist(userDto)).isTrue();
+    }
+
+    @DisplayName("JUnit test for delete method when id does not exist")
+    @Test
+    public void should_throw_exception_when_user_id_to_delete_does_not_exist(){
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Throwable throwable = catchThrowable(() -> userService.delete(1L));
+        assertThat(throwable).isInstanceOf(UserNotFoundException.class);
+    }
+
+    @DisplayName("JUnit test for delete method")
+    @Test
+    public void should_soft_delete_user(){
+        User user = TestDocumentInitializer.getUserEntity("Manager");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        userService.delete(user.getId());
+
+        verify(userRepository, times(1)).save(user);
+        assertThat(user.getIsDeleted()).isTrue();
     }
 
 
