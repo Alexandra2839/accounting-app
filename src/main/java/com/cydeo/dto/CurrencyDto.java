@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 
 import javax.annotation.Generated;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -53,22 +54,22 @@ public class CurrencyDto {
     }
 
     public BigDecimal getEuro() {
-        return usd.get("eur");
+        return usd.get("eur").setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getBritishPound() {
-        return usd.get("gbp");
+        return usd.get("gbp").setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getCanadianDollar() {
-        return usd.get("cad");
+        return usd.get("cad").setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getJapaneseYen() {
-        return usd.get("jpy");
+        return usd.get("jpy").setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getIndianRupee() {
-        return usd.get("inr");
+        return usd.get("inr").setScale(2, RoundingMode.HALF_UP);
     }
 }
