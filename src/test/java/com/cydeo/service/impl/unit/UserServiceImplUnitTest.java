@@ -8,7 +8,6 @@ import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.UserRepository;
 import com.cydeo.service.SecurityService;
 import com.cydeo.service.impl.UserServiceImpl;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -106,7 +105,7 @@ class UserServiceImplUnitTest {
     }
 
     @Test
-    public void should_save_user_and_return_saved_user(){
+    public void should_save_user_and_return_saved_user() {
         User user = TestDocumentInitializer.getUserEntity("Manager");
         UserDto userDto = TestDocumentInitializer.getUser("Manager");
 
@@ -118,8 +117,26 @@ class UserServiceImplUnitTest {
         UserDto savedUser = userService.save(userDto);
 
         assertThat(savedUser).isNotNull();
+    }
 
+    @Test
+    public void should_return_false_if_email_does_not_exist() {
+        UserDto userDto = TestDocumentInitializer.getUser("Admin");
 
+        when(userRepository.findByUsername(userDto.getUsername())).thenReturn(null);
+
+        assertThat(userService.isEmailExist(userDto)).isFalse();
+    }
+
+    @Test
+    public void should_return_true_if_email_exist() {
+        UserDto userDto = TestDocumentInitializer.getUser("Admin");
+        User user = TestDocumentInitializer.getUserEntity("Admin");
+        user.setId(2L);
+
+        when(userRepository.findByUsername(userDto.getUsername())).thenReturn(user);
+
+        assertThat(userService.isEmailExist(userDto)).isTrue();
     }
 
 
