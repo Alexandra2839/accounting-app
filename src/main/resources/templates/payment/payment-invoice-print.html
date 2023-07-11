@@ -210,8 +210,12 @@
           <div style="min-width: 600px">
             <header>
               <div class="row">
-                  <a target="_blank" type="button" class="btn btn-primary disabled"><i class="fa fa-paper-plane mr-1" ></i>Send Email</a>
+                  <a target="_blank" type="button" style="margin-bottom: 15px" class="btn btn-primary disabled"><i class="fa fa-paper-plane mr-1" ></i>Send Email</a>
                   <hr>
+              </div>
+              <div class="row">
+                   <a id="companylistlink" class="btn btn-primary text-white mb-1"
+                         th:href="@{/payments/list}"><i class="fa fa-list mr-1"></i>Back to Payments List</a>
               </div>
               <div class="row">
                 <div class="col">
