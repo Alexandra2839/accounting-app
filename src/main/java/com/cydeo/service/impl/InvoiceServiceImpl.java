@@ -10,11 +10,13 @@ import com.cydeo.entity.Product;
 import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
 import com.cydeo.exception.InvoiceNotFoundException;
+import com.cydeo.exception.ProductNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.*;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final InvoiceProductService invoiceProductService;
@@ -147,7 +150,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceDB.getInvoiceProductList().stream().map(
                         l -> {
                             l.getProduct().setQuantityInStock(l.getProduct().getQuantityInStock() - l.getQuantity());
-                            l.setProfitLoss(invoiceProductService.calculateProfitLossForInvoiceProduct(mapperUtil.convert(l, new InvoiceProductDto())));
+                            if(l.getProduct().getQuantityInStock()<0){
+                                throw new ProductNotFoundException("Stock of "+l.getProduct().getName()+
+                                        " is not enough to approve this invoice. Please update this invoice.");
+                            }
+                            l.setProfitLoss(invoiceProductService
+                                    .calculateProfitLossForInvoiceProduct(mapperUtil.convert(l, new InvoiceProductDto())));
                             return l;
                         })
                 .collect(Collectors.toList());

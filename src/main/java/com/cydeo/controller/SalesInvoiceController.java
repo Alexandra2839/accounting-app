@@ -99,6 +99,7 @@ public class SalesInvoiceController {
     @GetMapping("/approve/{invoiceId}")
     public String approveSalesInvoice(@PathVariable Long invoiceId, Model model) {
         invoiceService.approveSalesInvoice(invoiceId);
+        invoiceProductService.checkLowLimit(invoiceId);
         return "redirect:/salesInvoices/list";
     }
 

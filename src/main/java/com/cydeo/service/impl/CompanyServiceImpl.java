@@ -1,8 +1,6 @@
 package com.cydeo.service.impl;
 
-import com.cydeo.client.CountryClient;
 import com.cydeo.dto.CompanyDto;
-import com.cydeo.dto.TokenDto;
 import com.cydeo.entity.Company;
 import com.cydeo.enums.CompanyStatus;
 import com.cydeo.exception.CompanyNotFoundException;
@@ -13,7 +11,6 @@ import com.cydeo.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;

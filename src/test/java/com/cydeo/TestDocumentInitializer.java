@@ -1,10 +1,7 @@
 package com.cydeo;
 
 import com.cydeo.dto.*;
-import com.cydeo.entity.Category;
-import com.cydeo.entity.ClientVendor;
-import com.cydeo.entity.Company;
-import com.cydeo.entity.User;
+import com.cydeo.entity.*;
 import com.cydeo.enums.*;
 import com.cydeo.mapper.MapperUtil;
 import org.modelmapper.ModelMapper;
@@ -109,5 +106,9 @@ public class TestDocumentInitializer {
                 .tax(BigDecimal.TEN)
                 .total(BigDecimal.TEN.multiply(BigDecimal.valueOf(1000)))
                 .build();
+    }
+
+    public static Invoice getInvoiceEntity(InvoiceStatus status, InvoiceType type){
+        return mapperUtil.convert(getInvoice(status, type), new Invoice());
     }
 }
