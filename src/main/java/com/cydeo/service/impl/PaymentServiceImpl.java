@@ -4,6 +4,7 @@ import com.cydeo.dto.CompanyDto;
 import com.cydeo.dto.PaymentDto;
 import com.cydeo.entity.Company;
 import com.cydeo.entity.Payment;
+import com.cydeo.entity.User;
 import com.cydeo.enums.Months;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.PaymentRepository;
@@ -76,5 +77,18 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDto getPaymentById(Long id) {
         Payment paymentById = paymentRepository.getPaymentById(id);
         return mapperUtil.convert(paymentById, new PaymentDto());
+    }
+
+    @Override
+    public PaymentDto update(PaymentDto payment) {
+        Payment payment1 = paymentRepository.getPaymentById(payment.getId());
+
+        Payment convertedPayment = mapperUtil.convert(payment, new Payment());
+
+        convertedPayment.setId(payment1.getId());
+
+        paymentRepository.save(convertedPayment);
+
+        return getPaymentById(payment.getId());
     }
 }

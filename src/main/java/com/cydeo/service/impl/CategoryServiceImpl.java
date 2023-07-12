@@ -4,6 +4,7 @@ import com.cydeo.dto.CategoryDto;
 import com.cydeo.dto.CompanyDto;
 import com.cydeo.entity.Category;
 import com.cydeo.entity.Company;
+import com.cydeo.exception.CategoryNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CategoryRepository;
 import com.cydeo.service.CategoryService;
@@ -11,7 +12,6 @@ import com.cydeo.service.CompanyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto findById(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow();
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(()->new CategoryNotFoundException("Category with this id "+id+" not found."));
         return mapperUtil.convert(category, new CategoryDto());
     }
 
@@ -61,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
         Category categoryInDB = categoryRepository.findById(categoryDto.getId())
-                .orElseThrow(() -> new NoSuchElementException("Category has not been found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category has not been found"));
 
         categoryDto.setId(categoryInDB.getId());
         Category convert = mapperUtil.convert(categoryDto, new Category());
@@ -74,7 +75,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto delete(CategoryDto categoryDto) {
-        Category category = categoryRepository.findByIdAndIsDeleted(categoryDto.getId(), false);
+        Category category = categoryRepository.findById(categoryDto.getId())
+                .orElseThrow(()->new CategoryNotFoundException("Category not found"));
         category.setIsDeleted(true);
         category.setDescription(categoryDto.getDescription() + " - " + categoryDto.getId());
         categoryRepository.save(category);

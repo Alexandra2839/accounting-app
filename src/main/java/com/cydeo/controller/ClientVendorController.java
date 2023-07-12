@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class ClientVendorController {
 
     @PostMapping("/create")
     public String createClientVendor(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto,
-                                     BindingResult bindingResult, Model model) {
+                                     BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         boolean isClientVendorNameExist = clientVendorService.isClientVendorExist(clientVendorDto);
         if (isClientVendorNameExist) {
@@ -48,6 +49,10 @@ public class ClientVendorController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("countries", addressService.getCountryList());
             return "clientVendor/clientVendor-create";
+        }
+        if (clientVendorDto.getAddress().getCountry().isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Please select a country.");
+            return "redirect:/clientVendors/create";
         }
         clientVendorService.save(clientVendorDto);
 
@@ -64,7 +69,7 @@ public class ClientVendorController {
     @PostMapping("/update/{id}")
     public String updateClientVendor(@PathVariable Long id,
                                      @Valid @ModelAttribute("clientVendor") ClientVendorDto clientVendorDto,
-                                     BindingResult bindingResult, Model model) {
+                                     BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         boolean isClientVendorNameExist = clientVendorService.isClientVendorExist(clientVendorDto);
         if (isClientVendorNameExist) {
@@ -74,7 +79,10 @@ public class ClientVendorController {
             model.addAttribute("countries", addressService.getCountryList());
             return "clientVendor/clientVendor-update";
         }
-
+        if (clientVendorDto.getAddress().getCountry().isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Please select a country.");
+            return "redirect:/clientVendors/update" + id;
+        }
         clientVendorService.update(clientVendorDto);
         return "redirect:/clientVendors/list";
     }
@@ -89,5 +97,7 @@ public class ClientVendorController {
     public void commonAttributes(Model model) {
         model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
         model.addAttribute("title", "Cydeo Accounting-Client&Vendor");
+        model.addAttribute("countries", addressService.getCountryList());
+
     }
 }
