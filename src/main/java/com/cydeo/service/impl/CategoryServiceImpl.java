@@ -64,11 +64,12 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new NoSuchElementException("Category has not been found"));
 
         categoryDto.setId(categoryInDB.getId());
-        categoryDto.setCompany(companyService.getCompanyDtoByLoggedInUser());
+        Category convert = mapperUtil.convert(categoryDto, new Category());
+        convert.setCompany(categoryInDB.getCompany());
 
-        categoryRepository.save(mapperUtil.convert(categoryDto, new Category()));
+        Category saved = categoryRepository.save(convert);
 
-        return mapperUtil.convert(categoryInDB, new CategoryDto());
+        return mapperUtil.convert(saved, new CategoryDto());
     }
 
     @Override
