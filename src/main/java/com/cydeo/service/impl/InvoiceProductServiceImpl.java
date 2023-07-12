@@ -9,6 +9,7 @@ import com.cydeo.entity.InvoiceProduct;
 import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
 import com.cydeo.exception.InvoiceProductNotFoundException;
+import com.cydeo.exception.ProductLowLimitAlertException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceProductRepository;
 import com.cydeo.service.InvoiceProductService;
@@ -156,6 +157,15 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         }
 
         return profitLoss;
+    }
+
+    @Override
+    public void checkLowLimit(Long invoiceId) {
+        List<InvoiceProduct> list = invoiceProductRepository.findByInvoiceId(invoiceId);
+        list.forEach(ip -> {
+            if (ip.getProduct().getQuantityInStock() < ip.getProduct().getLowLimitAlert())
+                throw new ProductLowLimitAlertException("Stock of " + ip.getProduct().getName() + " decreased below low limit.");
+        });
     }
 
 
