@@ -161,5 +161,15 @@ class UserServiceImplUnitTest {
         assertThat(user.getIsDeleted()).isTrue();
     }
 
+    @Test
+    public void should_set_only_admin_if_condition_met(){
+        UserDto userDto = TestDocumentInitializer.getUser("Admin");
+
+        when(userRepository.countByCompanyTitleAndRoleDescription(anyString(),anyString())).thenReturn(1);
+
+        UserDto updatedUser = userService.setOnlyAdmin(userDto);
+        assertThat(updatedUser.isOnlyAdmin()).isTrue();
+    }
+
 
 }
