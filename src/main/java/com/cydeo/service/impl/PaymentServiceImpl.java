@@ -4,7 +4,6 @@ import com.cydeo.dto.CompanyDto;
 import com.cydeo.dto.PaymentDto;
 import com.cydeo.entity.Company;
 import com.cydeo.entity.Payment;
-import com.cydeo.entity.User;
 import com.cydeo.enums.Months;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.PaymentRepository;
@@ -17,9 +16,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
