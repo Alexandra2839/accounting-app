@@ -28,4 +28,5 @@ public interface InvoiceProductService {
     BigDecimal calculateProfitLossForInvoiceProduct(InvoiceProductDto dto);
 
 
+    void checkLowLimit(Long invoiceId);
 }
