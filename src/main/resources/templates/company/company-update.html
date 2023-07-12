@@ -175,7 +175,6 @@
                                                                 <div class="controls">
                                                                     <label>Country</label>
                                                                     <select name="countyName" th:field="*{address.country}" class="custom-select">
-                                                                        <option th:value="''" th:text="Select" selected></option>
                                                                         <option th:each="country:${countries}"
                                                                                 th:value="${country}"
                                                                                 th:text="${country}"></option>
