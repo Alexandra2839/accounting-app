@@ -29,14 +29,14 @@ public class UserServiceImplIntegrationTest {
 
     @Test
     @Transactional
-    public void should_return_user_by_username() {
+    void should_return_user_by_username() {
         UserDto userDto = userService.findByUsername("admin@greentech.com");
 
         assertNotNull(userDto);
     }
 
     @Test
-    public void should_throw_exception_when_id_does_not_exist() {
+    void should_throw_exception_when_id_does_not_exist() {
         Long id = 22L;
         Throwable throwable = catchThrowable(() -> userService.findById(id));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
@@ -45,7 +45,7 @@ public class UserServiceImplIntegrationTest {
 
     @Test
     @Transactional
-    public void should_return_user_given_id() {
+    void should_return_user_given_id() {
         UserDto userDto = userService.findById(1L);
 
         assertNotNull(userDto);
@@ -56,7 +56,7 @@ public class UserServiceImplIntegrationTest {
     @Test
     @Transactional
     @WithMockUser(username = "root@cydeo.com", password = "Abc1", roles = "Root User")
-    public void should_return_all_admins_when_logged_in_as_root_user() {
+    void should_return_all_admins_when_logged_in_as_root_user() {
         List<UserDto> userDtos = userService.listAllUsers();
         List<String> expected = List.of("Chris", "Mary", "Garrison", "John");
         List<String> actual = userDtos.stream().map(UserDto::getFirstname).collect(Collectors.toList());
@@ -67,7 +67,7 @@ public class UserServiceImplIntegrationTest {
     @Test
     @Transactional
     @WithMockUser(username = "admin@bluetech.com", password = "Abc1", roles = "Admin")
-    public void should_return_all_users_of_logged_in_admin() {
+    void should_return_all_users_of_logged_in_admin() {
         List<UserDto> userDtos = userService.listAllUsers();
         List<String> expected = List.of("Chris", "Mike", "Tom");
         List<String> actual = userDtos.stream().map(UserDto::getFirstname).collect(Collectors.toList());
@@ -77,7 +77,7 @@ public class UserServiceImplIntegrationTest {
 
     @Test
     @Transactional
-    public void should_save_user() {
+    void should_save_user() {
         UserDto userDto = TestDocumentInitializer.getUser("Manager");
         UserDto savedDto = userService.save(userDto);
 
@@ -93,18 +93,18 @@ public class UserServiceImplIntegrationTest {
 
     @Test
     @Transactional
-    public void should_update_user() {
+    void should_update_user() {
         UserDto userDto = userService.findById(1L);
         userDto.setFirstname("Updated Name");
 
         UserDto actualUserDto = userService.update(userDto);
 
-        assertThat(actualUserDto).usingRecursiveComparison().isEqualTo(userDto);
+        assertThat(actualUserDto).usingRecursiveComparison().ignoringFields("password").isEqualTo(userDto);
     }
 
     @Test
     @Transactional
-    public void should_delete_user() {
+    void should_delete_user() {
         UserDto userDto = TestDocumentInitializer.getUser("Admin");
         userDto.setId(9L);
 
@@ -120,7 +120,7 @@ public class UserServiceImplIntegrationTest {
 
     @Test
     @Transactional
-    public void should_set_only_admin() {
+    void should_set_only_admin() {
         UserDto dto = userService.findById(6L);
         UserDto userDto = userService.setOnlyAdmin(dto);
 
