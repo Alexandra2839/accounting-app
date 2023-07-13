@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -42,15 +43,16 @@ class UserServiceImplUnitTest {
     private UserServiceImpl userService;
 
     @Test
-    public void should_throw_exception_when_user_does_not_exist() {
+    void should_throw_exception_when_user_does_not_exist() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
         Throwable throwable = catchThrowable(() -> userService.findById(1L));
         assertThat(throwable).isInstanceOf(UserNotFoundException.class);
+        assertEquals("User with id " + "1" + " could not be found", throwable.getMessage());
 
     }
 
     @Test
-    public void should_return_user_by_id_if_exists() {
+    void should_return_user_by_id_if_exists() {
         UserDto userDto = TestDocumentInitializer.getUser("admin");
         User user = mapperUtil.convert(userDto, new User());
 
@@ -62,7 +64,7 @@ class UserServiceImplUnitTest {
     }
 
     @Test
-    public void should_update_user_and_return_updated_user() {
+    void should_update_user_and_return_updated_user() {
         UserDto userDto = TestDocumentInitializer.getUser("role");
         userDto.setUsername("JohnSmith@test.com");
         userDto.setFirstname("John");
@@ -77,7 +79,7 @@ class UserServiceImplUnitTest {
     }
 
     @Test
-    public void should_return_user_list_for_root_user() {
+    void should_return_user_list_for_root_user() {
         User user = TestDocumentInitializer.getUserEntity("Admin");
         User user2 = TestDocumentInitializer.getUserEntity("Admin");
         UserDto userDto = TestDocumentInitializer.getUser("Root User");
@@ -88,12 +90,11 @@ class UserServiceImplUnitTest {
 
         List<UserDto> userList = userService.listAllUsers();
 
-        assertThat(userList).isNotNull();
-        assertThat(userList.size()).isEqualTo(2);
+        assertThat(userList).hasSize(2);
     }
 
     @Test
-    public void should_return_user_list_for_admin() {
+    void should_return_user_list_for_admin() {
         User user = TestDocumentInitializer.getUserEntity("Manager");
         UserDto userDto = TestDocumentInitializer.getUser("Admin");
 
@@ -103,12 +104,11 @@ class UserServiceImplUnitTest {
 
         List<UserDto> userList = userService.listAllUsers();
 
-        assertThat(userList).isNotNull();
-        assertThat(userList.size()).isEqualTo(1);
+        assertThat(userList).hasSize(1);
     }
 
     @Test
-    public void should_save_user_and_return_saved_user() {
+    void should_save_user_and_return_saved_user() {
         User user = TestDocumentInitializer.getUserEntity("Manager");
         UserDto userDto = TestDocumentInitializer.getUser("Manager");
 
@@ -121,7 +121,7 @@ class UserServiceImplUnitTest {
     }
 
     @Test
-    public void should_return_false_if_email_does_not_exist() {
+    void should_return_false_if_email_does_not_exist() {
         UserDto userDto = TestDocumentInitializer.getUser("Admin");
 
         when(userRepository.findByUsername(userDto.getUsername())).thenReturn(null);
@@ -130,7 +130,7 @@ class UserServiceImplUnitTest {
     }
 
     @Test
-    public void should_return_true_if_email_exist() {
+    void should_return_true_if_email_exist() {
         UserDto userDto = TestDocumentInitializer.getUser("Admin");
         User user = TestDocumentInitializer.getUserEntity("Admin");
         user.setId(2L);
@@ -141,7 +141,7 @@ class UserServiceImplUnitTest {
     }
 
     @Test
-    public void should_throw_exception_when_user_id_to_delete_does_not_exist() {
+    void should_throw_exception_when_user_id_to_delete_does_not_exist() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         Throwable throwable = catchThrowable(() -> userService.delete(1L));
@@ -150,7 +150,7 @@ class UserServiceImplUnitTest {
 
 
     @Test
-    public void should_soft_delete_user() {
+    void should_soft_delete_user() {
         User user = TestDocumentInitializer.getUserEntity("Manager");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
@@ -161,7 +161,7 @@ class UserServiceImplUnitTest {
     }
 
     @Test
-    public void should_set_only_admin_if_condition_met() {
+    void should_set_only_admin_if_condition_met() {
         UserDto userDto = TestDocumentInitializer.getUser("Admin");
 
         when(userRepository.countByCompanyTitleAndRoleDescription(anyString(), anyString())).thenReturn(1);
