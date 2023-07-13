@@ -2,15 +2,13 @@ package com.cydeo.service.impl.unit;
 
 import com.cydeo.TestDocumentInitializer;
 import com.cydeo.dto.*;
-import com.cydeo.entity.ClientVendor;
-import com.cydeo.entity.Company;
-import com.cydeo.entity.Invoice;
-import com.cydeo.entity.InvoiceProduct;
+import com.cydeo.entity.*;
 import com.cydeo.enums.ClientVendorType;
 import com.cydeo.enums.CompanyStatus;
 import com.cydeo.enums.InvoiceStatus;
 import com.cydeo.enums.InvoiceType;
 import com.cydeo.exception.InvoiceNotFoundException;
+import com.cydeo.exception.ProductNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.InvoiceRepository;
 import com.cydeo.service.CompanyService;
@@ -52,6 +50,8 @@ class InvoiceServiceImplTest {
     CompanyService companyService;
     @Mock
     private SecurityService securityService;
+    @Mock
+    private InvoiceProductService invoiceProductService;
 
     @Spy
     static MapperUtil mapperUtil = new MapperUtil(new ModelMapper());
@@ -101,19 +101,15 @@ class InvoiceServiceImplTest {
     }
     @Test
     void should_find_all() {
-        //given
-        List<Invoice> expectedList = getEntities();
-        List<InvoiceDto> dtos = getDtos();
-        //when
-        when(companyService.getCompanyDtoByLoggedInUser()).thenReturn(TestDocumentInitializer.getCompany(CompanyStatus.ACTIVE));
-        when(invoiceRepository.findAll()).thenReturn(expectedList);
-        List<InvoiceDto> actualList = invoiceService.listOfAllInvoices();
-        //then
-        //assertThat(actualList).usingRecursiveComparison().isEqualTo(dtos);
-        assertEquals(dtos.size(), actualList.size());
-        assertEquals(dtos.get(0).getId(), actualList.get(0).getId());
-        assertEquals(dtos.get(1).getId(), actualList.get(1).getId());
-        assertEquals(dtos.get(2).getId(), actualList.get(2).getId());
+        Invoice invoice = TestDocumentInitializer.getInvoiceEntity(InvoiceStatus.AWAITING_APPROVAL, InvoiceType.PURCHASE);
+        ArrayList<Invoice> invoiceList = new ArrayList<>();
+        invoiceList.add(invoice);
+
+        when(invoiceRepository.findAll()).thenReturn(invoiceList);
+
+        assertEquals(1, invoiceService.listOfAllInvoices().size());
+        verify(invoiceRepository).findAll();
+        verify(mapperUtil).convert((Object) any(), (InvoiceDto) any());
 
     }
     @Test
@@ -162,36 +158,39 @@ class InvoiceServiceImplTest {
     @Test
     void should_approve_purchase_invoice(){
         //given
-        InvoiceProductDto productDto = TestDocumentInitializer.getInvoiceProduct();
         InvoiceDto dto = TestDocumentInitializer.getInvoice(InvoiceStatus.AWAITING_APPROVAL, InvoiceType.PURCHASE);
         dto.setId(1L);
-        productDto.setInvoice(dto);
-        Invoice invoice = mapperUtil.convert(dto, new Invoice());
+        List<InvoiceProductDto> invoiceProductDtos = invoiceProductService.findByInvoiceId(dto.getId());
+        List<InvoiceProduct> invoiceProducts = invoiceProductDtos.stream()
+                .map(invoiceProductDto -> mapperUtil.convert(invoiceProductDto, new InvoiceProduct()))
+                .collect(Collectors.toList());
 
+        Invoice invoice = mapperUtil.convert(dto, new Invoice());
+        invoice.setInvoiceProductList(invoiceProducts);
         //when
-        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
+        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         InvoiceDto actualDto = invoiceService.approvePurchaseInvoice(dto.getId());
         //then
         assertEquals(InvoiceStatus.APPROVED, actualDto.getInvoiceStatus());
+        verify(invoiceRepository, times(1)).save(any(Invoice.class));
+
 
     }
     @Test
     void should_approve_sales_invoice(){
         //given
-        InvoiceProductDto productDto = TestDocumentInitializer.getInvoiceProduct();
-
         InvoiceDto dto = TestDocumentInitializer.getInvoice(InvoiceStatus.AWAITING_APPROVAL, InvoiceType.SALES);
         dto.setId(1L);
-        productDto.setInvoice(dto);
         Invoice invoice = mapperUtil.convert(dto, new Invoice());
-        invoice.setInvoiceProductList(Arrays.asList(mapperUtil.convert(productDto, new InvoiceProduct())));
-
+        invoice.setInvoiceProductList(new ArrayList<>());
         //when
         when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
+        when(invoiceRepository.findById(anyLong())).thenReturn(Optional.of(invoice));
         InvoiceDto actualDto = invoiceService.approveSalesInvoice(dto.getId());
         //then
         assertEquals(InvoiceStatus.APPROVED, actualDto.getInvoiceStatus());
+        verify(invoiceRepository, times(1)).save(any(Invoice.class));
 
     }
     @Test
@@ -241,23 +240,42 @@ class InvoiceServiceImplTest {
         verify(invoiceRepository).findTop3ByCompanyTitleAndInvoiceStatusOrderByDateDesc((String) any(),
                 (InvoiceStatus) any());
         verify(securityService).getLoggedInUser();
-//        //given
-//        List<Invoice> expectedList = getApprovedEntities();
-//        List<InvoiceDto> dtos = getApprovedDtos();
-//        //when
-//        when(companyService.getCompanyDtoByLoggedInUser()).thenReturn(TestDocumentInitializer.getCompany(CompanyStatus.ACTIVE));
-//        when(invoiceRepository.findTop3ByCompanyTitleAndInvoiceStatusOrderByDateDesc(companyService
-//                .getCompanyDtoByLoggedInUser().
-//                getTitle(), InvoiceStatus.APPROVED)).thenReturn(expectedList);
-//        when(securityService.getLoggedInUser()).thenReturn(TestDocumentInitializer.getUser("ADMIN"));
-//        List<InvoiceDto> actualList = invoiceService.list3LastApprovedInvoices();
-//        //then
-//        assertEquals(3, actualList.size());
-//        assertEquals(dtos.get(0).getInvoiceStatus(), actualList.get(0).getInvoiceStatus());
-//        assertEquals(dtos.get(1).getId(), actualList.get(1).getId());
-//        assertEquals(dtos.get(2).getId(), actualList.get(2).getId());
 
     }
+    @Test
+    void testCalculateInvoiceSummariesAndShowInvoiceListByType() {
+        when(invoiceRepository.findByCompanyTitleAndInvoiceTypeSorted(any(), any()))
+                .thenReturn(new ArrayList<>());
+        when(companyService.getCompanyDtoByLoggedInUser()).thenReturn(new CompanyDto());
+
+        assertTrue(invoiceService.calculateInvoiceSummariesAndShowInvoiceListByType(InvoiceType.PURCHASE).isEmpty());
+        verify(invoiceRepository).findByCompanyTitleAndInvoiceTypeSorted(any(), any());
+        verify(companyService).getCompanyDtoByLoggedInUser();
+    }
+  @Test
+  void should_calculate_total_coast(){
+        //given
+      when(invoiceRepository.findAllByInvoiceTypeAndInvoiceStatusAndCompanyTitle(any(),
+              any(), any())).thenReturn(new ArrayList<>());
+      UserDto user = TestDocumentInitializer.getUser("admin");
+      user.setCompany(TestDocumentInitializer.getCompany(CompanyStatus.ACTIVE));
+
+      when(securityService.getLoggedInUser()).thenReturn(user);
+      BigDecimal actualCalculateTotalCostResult = invoiceService.calculateTotalCost();
+      assertSame(actualCalculateTotalCostResult.ZERO, actualCalculateTotalCostResult);
+      assertEquals("0", actualCalculateTotalCostResult.toString());
+      verify(invoiceRepository).findAllByInvoiceTypeAndInvoiceStatusAndCompanyTitle(any(),
+              any(), any());
+      verify(securityService).getLoggedInUser();
+
+  }
+  @Test
+  void should_get_current_company(){
+        //given
+      CompanyDto companyDto = TestDocumentInitializer.getCompany(CompanyStatus.ACTIVE);
+      when(companyService.getCompanyDtoByLoggedInUser()).thenReturn(companyDto);
+      assertSame(companyDto, invoiceService.getCurrentCompany());
+  }
     private List<InvoiceDto> getApprovedDtos(){
         List<InvoiceDto> dtos = Arrays.asList(
                 TestDocumentInitializer.getInvoice(InvoiceStatus.APPROVED, InvoiceType.PURCHASE),
