@@ -84,6 +84,10 @@ public class TestDocumentInitializer {
                 .build();
     }
 
+    public static Product getProductEntity(){
+        return mapperUtil.convert(getProduct(), new Product());
+    }
+
     public static InvoiceProductDto getInvoiceProduct(){
         return InvoiceProductDto.builder()
                 .product(getProduct())
