@@ -98,6 +98,10 @@ public class TestDocumentInitializer {
                 .build();
     }
 
+    public static InvoiceProduct getInvoiceProductEntity(){
+        return mapperUtil.convert(getInvoiceProduct(), new InvoiceProduct());
+    }
+
     public static InvoiceDto getInvoice(InvoiceStatus status, InvoiceType type){
         return InvoiceDto.builder()
                 .invoiceNo("T-001")
