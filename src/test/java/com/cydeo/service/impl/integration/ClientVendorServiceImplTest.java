@@ -2,11 +2,11 @@ package com.cydeo.service.impl.integration;
 
 import com.cydeo.TestDocumentInitializer;
 import com.cydeo.dto.ClientVendorDto;
+import com.cydeo.entity.ClientVendor;
 import com.cydeo.enums.ClientVendorType;
 import com.cydeo.exception.ClientVendorNotFoundException;
 import com.cydeo.repository.ClientVendorRepository;
 import com.cydeo.service.impl.ClientVendorServiceImpl;
-import com.cydeo.service.impl.CompanyServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +14,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -28,12 +29,6 @@ class ClientVendorServiceImplTest {
 
     @Autowired
     ClientVendorRepository clientVendorRepository;
-
-    @Autowired
-    CompanyServiceImpl companyService;
-
-//    @Spy
-//    MapperUtil mapperUtil = new MapperUtil(new ModelMapper());
 
     @Test
     @Transactional
@@ -73,6 +68,7 @@ class ClientVendorServiceImplTest {
     }
 
     @Test
+    @Transactional
     @WithMockUser(username = "manager@bluetech.com", password = "Abc1", roles = "MANAGER")
     void should_save_client_vendor() {
         ClientVendorDto dto = TestDocumentInitializer.getClientVendor(ClientVendorType.CLIENT);
@@ -83,31 +79,52 @@ class ClientVendorServiceImplTest {
         assertNotNull(actualDto.getId());
         assertNotNull(actualDto.getAddress().getId());
         assertNotNull(actualDto.getCompany());
+        // to make other tests pass
+        ClientVendor clientVendor = clientVendorRepository.findById(actualDto.getId()).orElseThrow();
+        clientVendorRepository.delete(clientVendor);
     }
 
     @Test
     @Transactional
     @WithMockUser(username = "manager@bluetech.com", password = "Abc1", roles = "MANAGER")
     void should_update_client_vendor() {
+        // given
         ClientVendorDto dto = clientVendorService.findById(1L);
         dto.setClientVendorName("Updating");
+        // when
         ClientVendorDto actualDto = clientVendorService.update(dto);
+        // then
         assertThat(actualDto).usingRecursiveComparison()
                 .isEqualTo(dto);
     }
 
     @Test
     void should_not_update_and_throw_exception_when_client_vendor_not_found() {
+        // given
+        ClientVendorDto dto = TestDocumentInitializer.getClientVendor(ClientVendorType.CLIENT);
+        dto.setId(100L);
         // when
-        // it throws exception since no mock of clientVendorRepository and clientVendorRepository.findById(1L) returns null
-        Throwable throwable = catchThrowable( () -> clientVendorService.update(TestDocumentInitializer.getClientVendor(ClientVendorType.CLIENT)));
+        Throwable throwable = catchThrowable( () -> clientVendorService.update(dto));
         // then
         assertInstanceOf(ClientVendorNotFoundException.class, throwable);
         assertEquals("No Client or Vendor founded" , throwable.getMessage());
     }
 
     @Test
+    @Transactional
+//    @Commit
     void delete() {
-
+        // given
+        ClientVendorDto dto = TestDocumentInitializer.getClientVendor(ClientVendorType.CLIENT);
+        dto.setId(8L);
+        // when
+        clientVendorService.delete(dto);
+        // then
+        ClientVendor clientVendor = clientVendorRepository.findById(8L)
+                .orElseThrow( ()-> new NoSuchElementException("ClientVendor not found"));
+        assertTrue(clientVendor.getIsDeleted());
+        // to make other tests pass:
+        clientVendor.setIsDeleted(false);
+        clientVendorRepository.save(clientVendor);
     }
 }
