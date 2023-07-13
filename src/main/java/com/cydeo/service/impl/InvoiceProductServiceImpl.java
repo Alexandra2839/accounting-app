@@ -192,7 +192,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
             list2.stream().filter(list -> list.getInvoice().getDate().getMonth().toString().equals(month))
                     .forEach(invoiceProductDto -> sum2.add(invoiceProductDto.getProfitLoss()));
 
-            monthlyProfitLoss.put(list2.get(i).getInvoice().getDate().getMonth().toString(), sum2.stream().reduce(BigDecimal.ZERO, BigDecimal::add));
+            monthlyProfitLoss.put(month, sum2.stream().reduce(BigDecimal.ZERO, BigDecimal::add));
             i++;
         }
 
