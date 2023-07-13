@@ -25,13 +25,13 @@ public class ClientVendor extends BaseEntity {
 
     private String website;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Address address;
 
     @ManyToOne
     private Company company;
 
-    @OneToMany(mappedBy = "clientVendor")
+    @OneToMany(mappedBy = "clientVendor", fetch = FetchType.EAGER)
     private List<Invoice> invoices;
 
 }
