@@ -57,11 +57,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return all.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto())).collect(Collectors.toList());
     }
 
-    @Override
-    public List<InvoiceDto> listOfPurchasedInvoices(String s) {
-        List<Invoice> allPurchased = invoiceRepository.findAllByInvoiceNoStartingWith(s);
-        return allPurchased.stream().map(invoice -> mapperUtil.convert(invoice, new InvoiceDto())).collect(Collectors.toList());
-    }
 
     @Override
     public InvoiceDto save(InvoiceDto invoiceDto) {
