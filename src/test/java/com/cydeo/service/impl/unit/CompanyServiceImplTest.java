@@ -1,23 +1,15 @@
 package com.cydeo.service.impl.unit;
 
 import com.cydeo.TestDocumentInitializer;
-import com.cydeo.dto.ClientVendorDto;
 import com.cydeo.dto.CompanyDto;
 import com.cydeo.dto.UserDto;
-import com.cydeo.entity.Address;
-import com.cydeo.entity.ClientVendor;
 import com.cydeo.entity.Company;
-import com.cydeo.entity.User;
-import com.cydeo.enums.ClientVendorType;
 import com.cydeo.enums.CompanyStatus;
-import com.cydeo.exception.ClientVendorNotFoundException;
 import com.cydeo.exception.CompanyNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CompanyRepository;
 import com.cydeo.service.impl.CompanyServiceImpl;
 import com.cydeo.service.impl.SecurityServiceImpl;
-import org.hamcrest.Matcher;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +31,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.hamcrest.Matchers.any;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -58,36 +50,34 @@ class CompanyServiceImplTest {
     SecurityServiceImpl securityServiceImpl;
 
     @Spy
-    MapperUtil mapperUtil = new MapperUtil(new ModelMapper());
+    static MapperUtil mapperUtil = new MapperUtil(new ModelMapper());
 
     @Test
     @DisplayName("findById_success")
-    public void findById_shouldReturnCompanyDto_whenCompanyExists() {
+    void findById_shouldReturnCompanyDto_whenCompanyExists() {
         //Given
-        CompanyDto dto = TestDocumentInitializer.getCompany(CompanyStatus.PASSIVE);
-        dto.setId(1L);
-        Company company = mapperUtil.convert(dto, new Company());
+        Long id = 1L;
+        Company company = TestDocumentInitializer.getCompanyEntity(CompanyStatus.PASSIVE);
+        company.setId(id);
         //When
-        when(companyRepository.findById(dto.getId())).thenReturn(Optional.of(company));
-        CompanyDto actualDto = companyServiceImpl.findById(1L);
+        when(companyRepository.findById(id)).thenReturn(Optional.of(company));
         //Then
-        assertThat(actualDto).usingRecursiveComparison().isEqualTo(dto);
+        assertThat(companyServiceImpl.findById(id)).isEqualTo(mapperUtil.convert(company, new CompanyDto()));
     }
-
 
     @Test
     @DisplayName("findById_exception")
-    public void findById_shouldThrowCompanyNotFoundException_whenCompanyDoesNotExist() {
+    void findById_shouldThrowCompanyNotFoundException_whenCompanyDoesNotExist() {
         // it throws exception since no mock of company Repository and companyRepository.findById(1L) returns null
-        Throwable throwable = catchThrowable( () -> companyServiceImpl.findById(0L));
+        Throwable throwable = catchThrowable(() -> companyServiceImpl.findById(0L));
         // then
         assertInstanceOf(CompanyNotFoundException.class, throwable);
-        assertEquals("Company with id 0 does not exist in the system" , throwable.getMessage());
+        assertEquals("Company with id 0 does not exist in the system", throwable.getMessage());
     }
 
     @Test
     @DisplayName("listAllCompanies_success")
-    public void listAllCompanies_shouldReturnListOfCompanyDtos() {
+    void listAllCompanies_shouldReturnListOfCompanyDtos() {
         // Given
         List<CompanyDto> dtos = getDtos();
         List<Company> expectedList = getEntities();
@@ -99,36 +89,34 @@ class CompanyServiceImplTest {
                 .isEqualTo(dtos);
 
     }
+
     @Test
     @DisplayName("activateCompany_success")
-    public void activateCompanyById_shouldActivateCompany_whenCompanyExists() {
+    void activateCompanyById_shouldActivateCompany_whenCompanyExists() {
         // Given
         Company company = TestDocumentInitializer.getCompanyEntity(CompanyStatus.PASSIVE);
         company.setId(1L);
-
         when(companyRepository.findById(1L)).thenReturn(java.util.Optional.of(company));
-
         // When
         companyServiceImpl.activateCompanyById(1L);
-
         // Then
         assertEquals(company.getCompanyStatus(), CompanyStatus.ACTIVE);
     }
 
     @Test
     @DisplayName("activateCompany_exception")
-    public void activateCompanyById_shouldThrowCompanyNotFoundException_whenCompanyDoesNotExist(){
+    void activateCompanyById_shouldThrowCompanyNotFoundException_whenCompanyDoesNotExist() {
 
         // it throws exception since no mock of company Repository and companyRepository.findById(1L) returns null
-        Throwable throwable = catchThrowable( () -> companyServiceImpl.findById(0L));
+        Throwable throwable = catchThrowable(() -> companyServiceImpl.findById(0L));
         // then
         assertInstanceOf(CompanyNotFoundException.class, throwable);
-        assertEquals("Company with id 0 does not exist in the system" , throwable.getMessage());
+        assertEquals("Company with id 0 does not exist in the system", throwable.getMessage());
     }
 
     @Test
     @DisplayName("deactivateCompany_success")
-    public void deactivateCompanyById_shouldActivateCompany_whenCompanyExists() {
+    void deactivateCompanyById_shouldActivateCompany_whenCompanyExists() {
         // Given
         Company company = TestDocumentInitializer.getCompanyEntity(CompanyStatus.ACTIVE);
         company.setId(1L);
@@ -142,18 +130,17 @@ class CompanyServiceImplTest {
 
     @Test
     @DisplayName("deactivateCompany_exception")
-    public void deactivateCompanyById_shouldThrowCompanyNotFoundException_whenCompanyDoesNotExist(){
-// it throws exception since no mock of company Repository and companyRepository.findById(1L) returns null
-        Throwable throwable = catchThrowable( () -> companyServiceImpl.findById(0L));
+    void deactivateCompanyById_shouldThrowCompanyNotFoundException_whenCompanyDoesNotExist() {
+        // it throws exception since no mock of company Repository and companyRepository.findById(1L) returns null
+        Throwable throwable = catchThrowable(() -> companyServiceImpl.findById(0L));
         // then
         assertInstanceOf(CompanyNotFoundException.class, throwable);
-        assertEquals("Company with id 0 does not exist in the system" , throwable.getMessage());
+        assertEquals("Company with id 0 does not exist in the system", throwable.getMessage());
     }
 
     @Test
     @DisplayName("saveCompany_success")
-    public void save_shouldSaveCompany_whenCompanyIsValid(){
-
+    void save_shouldSaveCompany_whenCompanyIsValid() {
         CompanyDto dto = TestDocumentInitializer.getCompany(CompanyStatus.PASSIVE);
         dto.setId(1L);
         Company company = mapperUtil.convert(dto, new Company());
@@ -165,7 +152,8 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    public void updateById_shouldUpdateCompany_whenCompanyExists() {
+    @DisplayName("updateById_success")
+    void updateById_shouldUpdateCompany_whenCompanyExists() {
         // Given
         CompanyDto dto = TestDocumentInitializer.getCompany(CompanyStatus.PASSIVE);
         dto.setTitle("UpdatingCompany");
@@ -173,71 +161,49 @@ class CompanyServiceImplTest {
 
         when(companyRepository.findById(dto.getId())).thenReturn(Optional.of(company));
         when(companyRepository.save(ArgumentMatchers.any())).thenReturn(company);
-
         // When
         CompanyDto actualDto = companyServiceImpl.updateById(dto.getId(), dto);
-
         // Then
         assertThat(actualDto).usingRecursiveComparison().isEqualTo(dto);
     }
 
     @Test
+    @DisplayName("updateById_exception")
     void updateById_shouldThrowECompanyNotFoundException_whenCompanyDoesNotExist() {
         // it throws exception since no mock of company Repository and companyRepository.findById(1L) returns null
-        Throwable throwable = catchThrowable( () -> companyServiceImpl.findById(0L));
+        Throwable throwable = catchThrowable(() -> companyServiceImpl.findById(0L));
         // then
         assertInstanceOf(CompanyNotFoundException.class, throwable);
-        assertEquals("Company with id 0 does not exist in the system" , throwable.getMessage());
+        assertEquals("Company with id 0 does not exist in the system", throwable.getMessage());
     }
 
     @Test
-    public void getCompanyDtoByLoggedInUser_shouldReturnCompanyDto_whenLoggedInUserHasCompany() {
+    @DisplayName("getCompanyDtoByLoggedInUser_success")
+    void getCompanyDtoByLoggedInUser_shouldReturnCompanyDto_whenLoggedInUserHasCompany() {
         // Given
-        CompanyDto dto = TestDocumentInitializer.getCompany(CompanyStatus.PASSIVE);
-        dto.setId(1L);
-        Company company = mapperUtil.convert(dto, new Company());
+        Long id = 1L;
+        CompanyDto companyDto = TestDocumentInitializer.getCompany(CompanyStatus.PASSIVE);
+        companyDto.setId(id);
+        Company company = TestDocumentInitializer.getCompanyEntity(CompanyStatus.PASSIVE);
+        company.setId(companyDto.getId());
+        UserDto loggedInUser = TestDocumentInitializer.getUser("role");
 
-        when(companyServiceImpl.getCompanyDtoByLoggedInUser()).thenReturn(dto);
+        when(securityServiceImpl.getLoggedInUser()).thenReturn(loggedInUser);
         // When
-        CompanyDto companyDtoByUser = securityServiceImpl.getLoggedInUser().getCompany();
+        CompanyDto companyDtoByUser = companyServiceImpl.getCompanyDtoByLoggedInUser();
 
         // Then
-        assertThat(companyDtoByUser).usingRecursiveComparison().isEqualTo(dto);
-    }
-//
-//    @Test
-//    public void getCompanyDtoByLoggedInUser_shouldThrowCompanyNotFoundException_whenLoggedInUserHasNoCompany() {
-//        // Given
-//        when(securityServiceImpl.getLoggedInUser().getCompany()).thenReturn(null);
-//
-//        // When
-//        assertThrows(CompanyNotFoundException.class, () -> companyServiceImpl.getCompanyDtoByLoggedInUser());
-//    }
-//
-    @Test
-    public void isTitleExist_shouldReturnFalse_whenCompanyWithTitleExists() {
-        // Given
-        CompanyDto companyDto = new CompanyDto();
-        companyDto.setTitle("Company A");
-
-        Company company = new Company();
-        company.setTitle(companyDto.getTitle());
-
-        when(companyRepository.findByTitle(companyDto.getTitle())).thenReturn(Optional.of(company));
-
-        // When
-        boolean isTitleExist = companyServiceImpl.isTitleExist(companyDto);
-
-        // Then
-        assertFalse(isTitleExist);
+        assertEquals(companyDto.getId(), company.getId());
+        assertEquals(companyDto.getTitle(), companyDtoByUser.getTitle());
+        assertEquals(companyDto.getCompanyStatus(), CompanyStatus.PASSIVE);
     }
 
     @ParameterizedTest
+    @DisplayName("isTitleExist")
     @MethodSource(value = "company")
     void isTitleExist(CompanyDto dto, Company company, boolean expected) {
         // when
-//        when(companyRepository.findAllBesidesId1OrderedByStatusAndTitle())
-//                .thenReturn(Optional.ofNullable(company));
+        when(companyRepository.findByTitle(anyString())).thenReturn(Optional.ofNullable(company));
         // then
         assertEquals(expected, companyServiceImpl.isTitleExist(dto));
     }
@@ -246,42 +212,52 @@ class CompanyServiceImplTest {
         // given
         CompanyDto dto = TestDocumentInitializer.getCompany(CompanyStatus.PASSIVE);
         dto.setId(1L);
-        Company company = new MapperUtil(new ModelMapper()).convert(dto, new Company());
-        company.setId(2L);
+        Company company1 = new MapperUtil(new ModelMapper()).convert(dto, new Company());
+        company1.setId(2L);
         return Stream.of(
-                arguments(dto, company, true),
+                arguments(dto, company1, true),
                 arguments(dto, null, false)
         );
 
     }
 
-//    @Test
-//    public void listAllCompaniesByLoggedInUser_shouldReturnListOfCompanyDtos_whenLoggedInUserIsNotRootUser() {
-//        // Given
-//    }
-//
-//    @Test
-//    public void listAllCompaniesByLoggedInUser_shouldReturnAllCompanies_whenLoggedInUserIsRootUser() {
-//        // Given
-//        when(securityServiceImpl.getLoggedInUser().getRole().getDescription()).thenReturn("Root User");
-//
-//        List<Company> companies = List.of(
-//                new Company(),
-//                new Company()
-//        );
-//
-//        when(companyRepository.findAllBesidesId1OrderedByStatusAndTitle()).thenReturn(companies);
-//        when(mapperUtil.convert(companies.get(0), new CompanyDto())).thenReturn(new CompanyDto());
-//        when(mapperUtil.convert(companies.get(1), new CompanyDto())).thenReturn(new CompanyDto());
-//
-//        // When
-//        List<CompanyDto> companyDtos = companyServiceImpl.listAllCompaniesByLoggedInUser();
-//
-//        // Then
-//        assertEquals(2, companyDtos.size());
-//    }
+    @Test
+    @DisplayName("listAllCompaniesByLoggedInUser_NotRoot_success")
+    void listAllCompaniesByLoggedInUser_shouldReturnUsersCompanyDtos_whenLoggedInUserIsNotRootUser() {
+        // Given
+        UserDto userDto = TestDocumentInitializer.getUser("Admin");
+        Company company1 = TestDocumentInitializer.getCompanyEntity(CompanyStatus.PASSIVE);
+        List<CompanyDto> expectedList = List.of(mapperUtil.convert(company1, new CompanyDto()));
 
-    private List<CompanyDto> getDtos(){
+        // when
+        when(securityServiceImpl.getLoggedInUser()).thenReturn(userDto);
+        when(companyRepository.findByTitle(anyString())).thenReturn(Optional.ofNullable(company1));
+        List<CompanyDto> actualList = companyServiceImpl.listAllCompaniesByLoggedInUser();
+
+        //then
+        assertThat(actualList).usingRecursiveComparison().isEqualTo(expectedList);
+
+    }
+
+    @Test
+    @DisplayName("listAllCompaniesByLoggedInUser_Root_success")
+    void listAllCompaniesByLoggedInUser_shouldReturnAllCompanies_whenLoggedInUserIsRootUser() {
+        // Given
+        UserDto userDto = TestDocumentInitializer.getUser("Root User");
+        List<CompanyDto> dtoList = getDtos();
+
+        List<Company> companyList = getEntities();
+
+        // when
+        when(securityServiceImpl.getLoggedInUser()).thenReturn(userDto);
+        when(companyRepository.findAllBesidesId1OrderedByStatusAndTitle()).thenReturn(companyList);
+        List<CompanyDto> actualList = companyServiceImpl.listAllCompaniesByLoggedInUser();
+
+        //then
+        assertThat(actualList).usingRecursiveComparison().isEqualTo(dtoList);
+    }
+
+    private List<CompanyDto> getDtos() {
         List<CompanyDto> dtos = Arrays.asList(
                 TestDocumentInitializer.getCompany(CompanyStatus.PASSIVE),
                 TestDocumentInitializer.getCompany(CompanyStatus.ACTIVE),
@@ -295,17 +271,6 @@ class CompanyServiceImplTest {
                 .map(dto -> mapperUtil.convert(dto, new Company())).collect(Collectors.toList());
         return expectedList;
     }
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
