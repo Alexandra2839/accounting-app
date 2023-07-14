@@ -7,13 +7,7 @@ import com.cydeo.dto.InvoiceDto;
 import com.cydeo.dto.InvoiceProductDto;
 import com.cydeo.dto.ProductDto;
 import com.cydeo.dto.UserDto;
-import com.cydeo.entity.Address;
-import com.cydeo.entity.Category;
-import com.cydeo.entity.ClientVendor;
-import com.cydeo.entity.Company;
-import com.cydeo.entity.Invoice;
-import com.cydeo.entity.InvoiceProduct;
-import com.cydeo.entity.Product;
+import com.cydeo.entity.*;
 import com.cydeo.enums.ClientVendorType;
 import com.cydeo.enums.CompanyStatus;
 import com.cydeo.enums.InvoiceStatus;
@@ -73,8 +67,7 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = {InvoiceProductServiceImpl.class})
 @ExtendWith(MockitoExtension.class)
 class InvoiceProductServiceImplTest {
-    @Autowired
-    private InvoiceProductServiceImpl invoiceProductServiceImpl;
+
 
     @InjectMocks
     InvoiceProductServiceImpl invoiceProductService;
@@ -87,6 +80,7 @@ class InvoiceProductServiceImplTest {
     @Mock
     CompanyService companyService;
     @Spy
+    static
     MapperUtil mapperUtil = new MapperUtil(new ModelMapper());
 
 
@@ -114,7 +108,7 @@ class InvoiceProductServiceImplTest {
     }
 
     @Test
-    void findAll() {
+    void should_find_All_invoice_products() {
         List<InvoiceProductDto> listOfDtos = Arrays.asList(TestDocumentInitializer.getInvoiceProduct(),
                 TestDocumentInitializer.getInvoiceProduct(),
                 TestDocumentInitializer.getInvoiceProduct());
@@ -130,7 +124,7 @@ class InvoiceProductServiceImplTest {
     }
 
     @Test
-    void save() {
+    void should_save_invoice_product() {
         InvoiceProductDto dto = TestDocumentInitializer.getInvoiceProduct();
         dto.setId(1L);
         InvoiceProduct invoiceProduct = mapperUtil.convert(dto, new InvoiceProduct());
@@ -146,7 +140,7 @@ class InvoiceProductServiceImplTest {
     }
 
     @Test
-    void deleteInvoiceProduct() {
+    void should_delete_Invoice_Product() {
         InvoiceProductDto dto = TestDocumentInitializer.getInvoiceProduct();
         dto.setId(1L);
 
@@ -168,15 +162,24 @@ class InvoiceProductServiceImplTest {
 
     @Test
     void testFindByInvoiceId() {
+        //given
         InvoiceDto invoiceDto = TestDocumentInitializer.getInvoice(InvoiceStatus.AWAITING_APPROVAL, InvoiceType.PURCHASE);
         invoiceDto.setId(1L);
-        when(invoiceProductRepository.findByInvoiceId((Long) any())).thenReturn(new ArrayList<>());
-        assertTrue(invoiceProductService.findByInvoiceId(1L).isEmpty());
-        verify(invoiceProductRepository).findByInvoiceId((Long) any());
+
+        List<InvoiceProduct> listOProducts = getInvoiceProducts();
+
+
+        //invoiceProductRepository.save(invoiceProduct);
+        //when
+        when(invoiceProductRepository.findByInvoiceId(1L)).thenReturn(listOProducts);
+        List<InvoiceProductDto> actualList = invoiceProductService.findByInvoiceId(1L);
+        //then
+        assertEquals(listOProducts.size(), actualList.size());
+        verify(invoiceProductRepository).findByInvoiceId(any());
     }
 
     @Test
-    void testIsStockNotEnough6() {
+    void testIsStockNotEnough() {
         InvoiceProductDto invoiceProductDto = mock(InvoiceProductDto.class);
         when(invoiceProductDto.getProduct())
                 .thenReturn(new ProductDto(1L, "Name", 1, 1, ProductUnit.LBS, new CategoryDto(), true));
@@ -189,7 +192,7 @@ class InvoiceProductServiceImplTest {
 
 
     @Test
-    void testCheckLowLimit() {
+    void should_test_Check_Low_Limit() {
         InvoiceProductDto invoiceProductDto = TestDocumentInitializer.getInvoiceProduct();
         InvoiceProduct invoiceProduct = mapperUtil.convert(invoiceProductDto, new InvoiceProduct());
         ArrayList<InvoiceProduct> invoiceProductList = new ArrayList<>();
@@ -200,27 +203,38 @@ class InvoiceProductServiceImplTest {
     }
 
     @Test
-    void listAllByDateAndLoggedInUser() {
-        UserDto userDto = securityService.getLoggedInUser();
-        CompanyDto companyDto = companyService.getCompanyDtoByLoggedInUser();
-
-
-        List<InvoiceProductDto> listOfDtos = Arrays.asList(TestDocumentInitializer.getInvoiceProduct(),
-                TestDocumentInitializer.getInvoiceProduct(),
-                TestDocumentInitializer.getInvoiceProduct());
-        List<InvoiceProduct> listOfEntities = listOfDtos.stream()
-                .map(invoiceProductDto -> mapperUtil.convert(invoiceProductDto, new InvoiceProduct()))
-                .collect(Collectors.toList());
-        when(invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc(any(InvoiceStatus.class),
-                any(Company.class))).thenReturn(listOfEntities);
-
-        when(securityService.getLoggedInUser()).thenReturn(userDto);
-        when(companyService.getCompanyDtoByLoggedInUser()).thenReturn(companyDto);
-
+    void should_show_list_of_All_By_Date_And_Logged_In_User() {
+        //given
+        UserDto user = TestDocumentInitializer.getUser("ADMIN");
+        List<InvoiceProduct> listOfEntities = getInvoiceProducts();
+        //when
+        when(securityService.getLoggedInUser()).thenReturn(user);
+        when(invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc(
+                any(), any())).thenReturn(listOfEntities);
+        //then
+        List<InvoiceProductDto> invoiceProductDtos = invoiceProductService.listAllByDateAndLoggedInUser();
 
         verify(invoiceProductRepository).findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc(
-                any(InvoiceStatus.class), any(Company.class));
+                any(), any());
+        assertNotNull(invoiceProductDtos);
 
+    }
+
+    private static List<InvoiceProductDto> getInvoiceProductDtos(){
+        List<InvoiceProductDto> invoiceProductDtos = new ArrayList<>();
+        invoiceProductDtos.add(TestDocumentInitializer.getInvoiceProduct());
+        invoiceProductDtos.add(TestDocumentInitializer.getInvoiceProduct());
+        invoiceProductDtos.add(TestDocumentInitializer.getInvoiceProduct());
+        invoiceProductDtos.get(0).setId(1L);
+        invoiceProductDtos.get(1).setId(2L);
+        invoiceProductDtos.get(2).setId(3L);
+        return invoiceProductDtos;
+    }
+    private static List<InvoiceProduct> getInvoiceProducts(){
+        List<InvoiceProduct> invoiceProducts = getInvoiceProductDtos().stream()
+                .map(invoiceProductDto -> mapperUtil.convert(invoiceProductDto, new InvoiceProduct()))
+                .collect(Collectors.toList());
+        return invoiceProducts;
     }
 
 }
