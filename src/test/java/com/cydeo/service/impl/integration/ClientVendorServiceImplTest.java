@@ -38,6 +38,7 @@ class ClientVendorServiceImplTest {
         // then
         assertNotNull(dto);
         assertEquals("Orange Tech", dto.getClientVendorName());
+
     }
 
     @Test
