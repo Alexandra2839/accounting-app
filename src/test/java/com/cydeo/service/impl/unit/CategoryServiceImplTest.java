@@ -1,4 +1,4 @@
-package com.cydeo.service.impl;
+package com.cydeo.service.impl.unit;
 
 import com.cydeo.TestDocumentInitializer;
 import com.cydeo.dto.CategoryDto;
@@ -10,6 +10,7 @@ import com.cydeo.exception.CategoryNotFoundException;
 import com.cydeo.mapper.MapperUtil;
 import com.cydeo.repository.CategoryRepository;
 import com.cydeo.service.CompanyService;
+import com.cydeo.service.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
