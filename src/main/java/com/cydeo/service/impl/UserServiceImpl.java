@@ -77,10 +77,12 @@ public class UserServiceImpl implements UserService {
         User convertedUser = mapperUtil.convert(user, new User());
 
         convertedUser.setId(user1.getId());
+        convertedUser.setPassword(passwordEncoder.encode(convertedUser.getPassword()));
+        convertedUser.setEnabled(true);
 
         userRepository.save(convertedUser);
 
-        return findByUsername(user.getUsername());
+        return mapperUtil.convert(convertedUser, new UserDto());
 
     }
 

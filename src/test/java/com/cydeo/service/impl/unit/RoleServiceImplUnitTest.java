@@ -38,7 +38,7 @@ class RoleServiceImplUnitTest {
     private SecurityService securityService;
 
     @Test
-    public void should_throw_exception_when_role_does_not_exist() {
+    void should_throw_exception_when_role_does_not_exist() {
         when(roleRepository.findById(1L)).thenReturn(Optional.empty());
         Throwable throwable = catchThrowable(() -> roleService.findById(1L));
         assertThat(throwable).isInstanceOf(RoleNotFoundException.class);
@@ -46,7 +46,7 @@ class RoleServiceImplUnitTest {
     }
 
     @Test
-    public void should_return_user_by_id_if_exists() {
+    void should_return_user_by_id_if_exists() {
         RoleDto roleDto = new RoleDto(1L, "Admin");
         Role role = mapperUtil.convert(roleDto, new Role());
 
@@ -58,7 +58,7 @@ class RoleServiceImplUnitTest {
     }
 
     @Test
-    public void should_return_role_list_for_root_user() {
+    void should_return_role_list_for_root_user() {
         Role role = new Role("Admin");
         UserDto userDto = TestDocumentInitializer.getUser("Root User");
 
@@ -72,7 +72,7 @@ class RoleServiceImplUnitTest {
     }
 
     @Test
-    public void should_return_role_list_for_not_root_user() {
+    void should_return_role_list_for_not_root_user() {
         Role role = new Role("Admin");
         Role role2 = new Role("Manager");
         Role role3 = new Role("Employee");
