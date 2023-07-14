@@ -80,8 +80,8 @@ class ClientVendorServiceImplTest {
         assertNotNull(actualDto.getAddress().getId());
         assertNotNull(actualDto.getCompany());
         // to make other tests pass
-        ClientVendor clientVendor = clientVendorRepository.findById(actualDto.getId()).orElseThrow();
-        clientVendorRepository.delete(clientVendor);
+//        ClientVendor clientVendor = clientVendorRepository.findById(actualDto.getId()).orElseThrow();
+//        clientVendorRepository.delete(clientVendor);
     }
 
     @Test
